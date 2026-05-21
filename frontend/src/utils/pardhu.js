@@ -158,7 +158,8 @@ export async function askPardhu(history, userMessage, grounding) {
     { role: 'user', content: userMessage },
   ];
   try {
-    const resp = await fetch('/api/chat', {
+    const API_BASE = process.env.REACT_APP_API_URL || '/api';
+    const resp = await fetch(`${API_BASE}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages, grounding }),
