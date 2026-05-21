@@ -1,0 +1,297 @@
+import React, { useState, useMemo } from 'react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import CasteDataPanel from './CasteDataPanel';
+import AllianceMapPanel from './AllianceMapPanel';
+import './HomePage.css';
+
+const fmtPct = v => (v == null ? '—' : Number(v).toFixed(1));
+const fmt = n => n >= 10000000 ? (n / 10000000).toFixed(1) + 'Cr' : n >= 100000 ? (n / 100000).toFixed(1) + 'L' : n >= 1000 ? (n / 1000).toFixed(0) + 'K' : String(n);
+
+export default function HomePage({ nationalSummary, recentAssembly, years, statesBy, onGo }) {
+  // PC Elections dropdown state
+  const [pcYear, setPcYear] = useState('');
+  const [pcState, setPcState] = useState('');
+  // AC Elections dropdown state
+  const [acYear, setAcYear] = useState('');
+  const [acState, setAcState] = useState('');
+  const [showDetailedResults, setShowDetailedResults] = useState(false);
+
+  const pcStates = useMemo(() => pcYear ? (statesBy[`${pcYear}|Lok Sabha`] || []) : [], [pcYear, statesBy]);
+  const acStates = useMemo(() => acYear ? (statesBy[`${acYear}|Assembly`] || []) : [], [acYear, statesBy]);
+
+  // Available years for PC and AC
+  const pcYears = useMemo(
+    () => years.filter(y => Object.keys(statesBy).some(k => k.startsWith(`${y}|Lok Sabha`))),
+    [years, statesBy]
+  );
+  const acYears = useMemo(
+    () => years.filter(y => Object.keys(statesBy).some(k => k.startsWith(`${y}|Assembly`))),
+    [years, statesBy]
+  );
+
+  // Pie data (top parties + Others bucket)
+  const pieData = nationalSummary?.parties || [];
+
+  const handlePcGo = () => {
+    if (pcYear && pcState) onGo(pcYear, 'Lok Sabha', pcState);
+  };
+  const handleAcGo = () => {
+    if (acYear && acState) onGo(acYear, 'Assembly', acState);
+  };
+
+  // Custom pie tooltip
+  const PieTip = ({ active, payload }) => {
+    if (!active || !payload?.length) return null;
+    const d = payload[0].payload;
+    return (
+      <div className="hp-tip">
+        <div className="hp-tip-name" style={{ color: d.color }}>{d.name}</div>
+        <div className="hp-tip-row">Vote Share: <b>{d.value}%</b></div>
+        {d.seats != null && <div className="hp-tip-row">Seats: <b>{d.seats}</b></div>}
+      </div>
+    );
+  };
+
+  return (
+    <div className="homepage fade-in">
+      {/* ============ TOP ROW: PC 2024 Summary + Election Data ============ */}
+      <div className="hp-top-row">
+        {/* LEFT: PC 2024 Summary (pie + alliance table) */}
+        <section className="hp-section hp-summary-section">
+          <h2 className="iv-title">
+            <span className="iv-title-teal">PC {nationalSummary?.year || 2024}</span>
+            <span className="iv-title-gold">Summary</span>
+          </h2>
+
+          <div className="hp-summary-body">
+            {/* Pie chart */}
+            <div className="hp-pie-wrap">
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%" cy="50%"
+                    outerRadius={90}
+                    innerRadius={0}
+                    paddingAngle={1}
+                    label={({ value }) => `${value}%`}
+                    labelLine={{ stroke: '#999', strokeWidth: 1 }}
+                  >
+                    {pieData.map((p, i) => <Cell key={i} fill={p.color} stroke="#fff" strokeWidth={1.5} />)}
+                  </Pie>
+                  <Tooltip content={<PieTip />} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="hp-pie-legend">
+                {pieData.map(p => (
+                  <span key={p.name} className="hp-legend-pill">
+                    <span className="hp-legend-dot" style={{ background: p.color }} />
+                    {p.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Detailed results expandable link */}
+            <button
+              className="hp-detailed-link"
+              onClick={() => setShowDetailedResults(s => !s)}
+            >
+              PC {nationalSummary?.year || 2024} Detailed Results {showDetailedResults ? '▲' : '▼'}
+            </button>
+
+            {showDetailedResults && (
+              <div className="hp-detailed-table table-wrap fade-in">
+                <table className="table-compact">
+                  <thead>
+                    <tr>
+                      <th>Party</th>
+                      <th style={{ textAlign: 'right' }}>Seats</th>
+                      <th style={{ textAlign: 'right' }}>Vote %</th>
+                      <th style={{ textAlign: 'right' }}>Contested</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pieData.map(p => (
+                      <tr key={p.name}>
+                        <td>
+                          <span className="party-dot" style={{ background: p.color, marginRight: 6 }} />
+                          {p.name}
+                        </td>
+                        <td style={{ textAlign: 'right', fontWeight: 600 }}>{p.seats ?? '—'}</td>
+                        <td style={{ textAlign: 'right' }}>{p.value}%</td>
+                        <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{p.contested ?? '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Alliance table */}
+            <div className="hp-alliance-table table-wrap">
+              <table className="table-compact">
+                <thead>
+                  <tr>
+                    <th>Alliance</th>
+                    <th style={{ textAlign: 'right' }}>Seats</th>
+                    <th style={{ textAlign: 'right' }}>Votes %</th>
+                    <th style={{ textAlign: 'right' }}>Contested Voteshare</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(nationalSummary?.alliances || []).map(a => (
+                    <tr key={a.name}>
+                      <td style={{ fontWeight: 600, color: a.color }}>{a.name}</td>
+                      <td style={{ textAlign: 'right', fontWeight: 700 }}>{a.seats}</td>
+                      <td style={{ textAlign: 'right' }}>{fmtPct(a.voteShare)}</td>
+                      <td style={{ textAlign: 'right' }}>{fmtPct(a.contestedVoteShare)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button className="hp-alliance-link">Alliances Partywise Details ›</button>
+            </div>
+          </div>
+        </section>
+
+        {/* RIGHT: Election Data (PC / AC selectors + search) */}
+        <section className="hp-section hp-election-data">
+          <h2 className="iv-title">
+            <span className="iv-title-teal">Election</span>
+            <span className="iv-title-gold">Data</span>
+          </h2>
+
+          <div className="hp-ed-body">
+            {/* PC Elections row */}
+            <div className="hp-ed-group">
+              <label className="hp-ed-label">PC Elections (Lok Sabha)</label>
+              <div className="hp-ed-row">
+                <select value={pcYear} onChange={e => { setPcYear(e.target.value); setPcState(''); }}>
+                  <option value="">Year</option>
+                  {pcYears.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+                <span className="hp-required">*</span>
+                <select value={pcState} onChange={e => setPcState(e.target.value)} disabled={!pcYear}>
+                  <option value="">States</option>
+                  {pcStates.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <button
+                  className="btn-go"
+                  onClick={handlePcGo}
+                  disabled={!pcYear || !pcState}
+                  title="View results"
+                >GO</button>
+              </div>
+            </div>
+
+            {/* AC Elections row */}
+            <div className="hp-ed-group">
+              <label className="hp-ed-label">AC Elections (Vidhan Sabha)</label>
+              <div className="hp-ed-row">
+                <select value={acYear} onChange={e => { setAcYear(e.target.value); setAcState(''); }}>
+                  <option value="">Year</option>
+                  {acYears.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+                <span className="hp-required">*</span>
+                <select value={acState} onChange={e => setAcState(e.target.value)} disabled={!acYear}>
+                  <option value="">States</option>
+                  {acStates.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <button
+                  className="btn-go"
+                  onClick={handleAcGo}
+                  disabled={!acYear || !acState}
+                  title="View results"
+                >GO</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ============ ALLIANCE MAP (India) ============ */}
+      <AllianceMapPanel />
+
+      {/* ============ CASTE DEMOGRAPHICS ============ */}
+      <CasteDataPanel />
+
+      {/* ============ RECENT ASSEMBLY ELECTIONS ============ */}
+      <section className="hp-section hp-recent-section">
+        <h2 className="iv-title">
+          <span className="iv-title-teal">Recent</span>
+          <span className="iv-title-gold">Assembly Elections</span>
+        </h2>
+
+        <div className="hp-recent-grid">
+          {recentAssembly.map(card => (
+            <button
+              key={`${card.state}-${card.year}`}
+              className="hp-recent-card"
+              onClick={() => onGo(card.year, 'Assembly', card.state)}
+            >
+              <div className="hp-recent-card-banner">
+                <span className="hp-recent-state">{card.state}</span>
+                <span className="hp-recent-year">{card.year}</span>
+              </div>
+              <div className="hp-recent-map" style={{ background: `linear-gradient(135deg, ${card.bannerFrom || '#fff5e6'} 0%, ${card.bannerTo || '#ffe9c2'} 100%)` }}>
+                <div className="hp-recent-map-icon">
+                  <svg viewBox="0 0 64 64" width="40" height="40" aria-hidden="true">
+                    <path d="M32 6 L52 26 Q55 32 50 38 L36 56 Q33 60 30 56 L14 38 Q9 32 12 26 Z"
+                      fill="rgba(255,107,0,0.22)" stroke="rgba(255,107,0,0.55)" strokeWidth="1.5"/>
+                    <circle cx="32" cy="28" r="5" fill="rgba(0,71,171,0.55)" />
+                  </svg>
+                </div>
+              </div>
+              <div className="hp-recent-table">
+                <div className="hp-recent-row hp-recent-head">
+                  <span>Party</span>
+                  <span>Won</span>
+                  <span>Swing</span>
+                </div>
+                {card.rows.slice(0, 3).map(r => (
+                  <div className="hp-recent-row" key={r.party}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span className="party-dot" style={{ background: r.color }} />
+                      {r.party}
+                    </span>
+                    <span style={{ fontWeight: 700, color: r.color }}>{r.won}</span>
+                    <span style={{ color: r.swing > 0 ? 'var(--india-green)' : 'var(--sp)', fontWeight: 600 }}>
+                      {r.swing > 0 ? '+' : ''}{r.swing}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* ============ AT-A-GLANCE METRICS ============ */}
+      <section className="hp-section hp-stats-section">
+        <h2 className="iv-title iv-title-sm">
+          <span className="iv-title-teal">National</span>
+          <span className="iv-title-gold">Snapshot</span>
+        </h2>
+        <div className="hp-stats-grid">
+          <StatTile label="Total Lok Sabha Seats" value={nationalSummary?.totalSeats || 543} accent="var(--teal)" />
+          <StatTile label="Total States / UTs" value={nationalSummary?.totalStates || 36} accent="var(--gold)" />
+          <StatTile label="Total Eligible Voters" value={nationalSummary?.totalVoters ? fmt(nationalSummary.totalVoters) : '96.8Cr'} accent="var(--india-blue)" />
+          <StatTile label="Voter Turnout" value={`${nationalSummary?.turnout ?? 65.8}%`} accent="var(--india-green)" />
+          <StatTile label="Total Candidates" value={nationalSummary?.totalCandidates ? fmt(nationalSummary.totalCandidates) : '8.36K'} accent="var(--saffron)" />
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function StatTile({ label, value, accent }) {
+  return (
+    <div className="hp-stat-tile">
+      <span className="hp-stat-value" style={{ color: accent }}>{value}</span>
+      <span className="hp-stat-label">{label}</span>
+    </div>
+  );
+}

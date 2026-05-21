@@ -1,0 +1,98 @@
+.upload-panel { padding: 32px 0; }
+
+.upload-hero {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(15,138,140,0.06), rgba(247,165,0,0.04));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.upload-hero-icon { font-size: 40px; margin-bottom: 8px; }
+.upload-hero-title { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.4px; }
+.upload-hero-sub { font-size: 14px; color: var(--text-secondary); }
+
+.upload-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+@media (max-width: 980px) { .upload-grid { grid-template-columns: 1fr; } }
+
+.upload-form-card { display: flex; flex-direction: column; gap: 20px; }
+
+.upload-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .upload-form-grid { grid-template-columns: 1fr; } }
+
+.upload-input {
+  background: #fff;
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  width: 100%;
+  min-height: 36px;
+}
+.upload-input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(15,138,140,0.12); }
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 32px 24px;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: var(--teal); background: rgba(15,138,140,0.04); }
+.drop-zone.has-file { border-color: var(--india-green); background: rgba(19,136,8,0.04); border-style: solid; }
+
+.dz-icon { font-size: 36px; opacity: 0.6; }
+.dz-text { font-size: 14px; color: var(--text-secondary); }
+.dz-link { color: var(--teal); font-weight: 600; text-decoration: underline; }
+.dz-formats { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; font-weight: 600; }
+.dz-filename { font-family: var(--font-display); font-weight: 700; color: var(--text-primary); }
+.dz-filesize { font-size: 12px; color: var(--text-muted); }
+
+.upload-msg {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
+}
+.upload-msg.uploading { background: rgba(15,138,140,0.08); color: var(--teal); border: 1px solid rgba(15,138,140,0.2); }
+.upload-msg.success { background: rgba(19,136,8,0.08); color: var(--india-green); border: 1px solid rgba(19,136,8,0.25); }
+.upload-msg.error { background: rgba(229,57,53,0.08); color: #c0392b; border: 1px solid rgba(229,57,53,0.25); }
+
+.upload-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+.upload-instructions { display: flex; flex-direction: column; gap: 14px; }
+
+.col-list { display: flex; flex-direction: column; gap: 10px; }
+.col-item { padding: 10px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.col-name { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+
+.col-req { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
+.col-req.required { background: rgba(229,57,53,0.12); color: #c0392b; }
+.col-req.optional { background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border); }
+
+.col-desc { font-size: 11px; color: var(--text-secondary); }
+
+.sources-list, .mongo-steps { display: flex; flex-direction: column; gap: 8px; }
+
+.source-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 12px; color: var(--text-primary); font-weight: 500;
+  text-decoration: none; transition: all 0.15s;
+}
+.source-link:hover { border-color: var(--teal); color: var(--teal); text-decoration: none; }
+.source-arrow { color: var(--text-muted); }
+
+.mongo-step {
+  padding: 8px 12px; background: var(--bg-table-head); color: #fff;
+  border-radius: var(--radius-sm); font-family: var(--font-mono), monospace;
+  font-size: 11px; overflow-x: auto; white-space: nowrap;
+}
+.mongo-step code { background: transparent; color: inherit; }

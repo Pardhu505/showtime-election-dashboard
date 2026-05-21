@@ -1,0 +1,24 @@
+# ---- dependencies ----
+node_modules/
+**/node_modules/
+
+# ---- environment / secrets (NEVER commit) ----
+.env
+.env.local
+.env.*.local
+**/.env
+!**/.env.example
+
+# ---- build output ----
+build/
+dist/
+**/build/
+**/dist/
+coverage/
+
+# ---- logs & os cruft ----
+*.log
+npm-debug.log*
+yarn-debug.log*
+.DS_Store
+Thumbs.db

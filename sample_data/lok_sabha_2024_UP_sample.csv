@@ -1,0 +1,29 @@
+Constituency Name,Constituency Type,Parliament Constituency,Candidate Name,Party,Party Abbr,Party Color,Votes,Vote Share,Winner,Gender,Age,Criminal Cases,Latitude,Longitude
+Varanasi,PC,,Narendra Modi,BJP,BJP,#FF6B00,612000,54.24,Yes,M,73,0,25.32,82.97
+Varanasi,PC,,Ajay Rai,INC,INC,#00A651,467000,41.38,No,M,58,0,25.32,82.97
+Varanasi,PC,,Sanjay Chaurasiya,SP,SP,#E53935,231000,4.38,No,M,52,0,25.32,82.97
+Lucknow,PC,,Rajnath Singh,BJP,BJP,#FF6B00,712000,58.12,Yes,M,72,0,26.85,80.95
+Lucknow,PC,,Ravidas Mehrotra,SP,SP,#E53935,445000,36.32,No,M,61,0,26.85,80.95
+Lucknow,PC,,Pooja Pandey,INC,INC,#00A651,71000,5.56,No,F,38,0,26.85,80.95
+Rae Bareli,PC,,Rahul Gandhi,INC,INC,#00A651,689000,59.31,Yes,M,54,0,26.22,81.24
+Rae Bareli,PC,,Dinesh Pratap Singh,BJP,BJP,#FF6B00,476000,40.97,No,M,56,0,26.22,81.24
+Amethi,PC,,KL Sharma,INC,INC,#00A651,567000,51.63,Yes,M,47,0,26.15,81.72
+Amethi,PC,,Smriti Irani,BJP,BJP,#FF6B00,532000,48.44,No,F,48,0,26.15,81.72
+Kannauj,PC,,Akhilesh Yadav,SP,SP,#E53935,789000,61.78,Yes,M,51,0,27.06,79.91
+Kannauj,PC,,Subhash Pusikar,BJP,BJP,#FF6B00,489000,38.30,No,M,55,0,27.06,79.91
+Mainpuri,PC,,Dimple Yadav,SP,SP,#E53935,789000,62.44,Yes,F,46,0,27.23,79.02
+Mainpuri,PC,,Jaiveer Singh,BJP,BJP,#FF6B00,487000,38.52,No,M,53,0,27.23,79.02
+Gorakhpur,PC,,Ravi Kishan,BJP,BJP,#FF6B00,712000,56.52,Yes,M,54,0,26.76,83.37
+Gorakhpur,PC,,Kajal Nishad,SP,SP,#E53935,534000,42.38,No,F,41,0,26.76,83.37
+Azamgarh,PC,,Dharmendra Yadav,SP,SP,#E53935,634000,52.11,Yes,M,47,0,26.07,83.18
+Azamgarh,PC,,Dinesh Lal Yadav,BJP,BJP,#FF6B00,512000,42.10,No,M,51,0,26.07,83.18
+Mathura,PC,,Hema Malini,BJP,BJP,#FF6B00,789000,61.27,Yes,F,75,0,27.49,77.67
+Mathura,PC,,Mukesh Dhangar,SP,SP,#E53935,423000,32.84,No,M,42,0,27.49,77.67
+Ghaziabad,PC,,Atul Garg,BJP,BJP,#FF6B00,934000,68.32,Yes,M,58,0,28.66,77.44
+Ghaziabad,PC,,Dolly Sharma,INC,INC,#00A651,389000,28.47,No,F,44,0,28.66,77.44
+Nagina,PC,,Chandrashekhar Azad,Independent,IND,#757575,562000,55.79,Yes,M,37,2,29.44,78.44
+Nagina,PC,,Om Kumar,BJP,BJP,#FF6B00,325000,32.25,No,M,52,0,29.44,78.44
+Kairana,PC,,Iqra Hasan,SP,SP,#E53935,634000,51.98,Yes,F,30,0,29.49,77.21
+Kairana,PC,,Pradeep Chaudhary,BJP,BJP,#FF6B00,580000,47.56,No,M,45,0,29.49,77.21
+Faizabad,PC,,Awadhesh Prasad,SP,SP,#E53935,554000,51.67,Yes,M,56,0,26.77,82.15
+Faizabad,PC,,Lallu Singh,BJP,BJP,#FF6B00,499000,46.54,No,M,60,0,26.77,82.15

@@ -1,0 +1,383 @@
+/* =========================================================================
+   PardhuChat — floating bottom-right chat assistant
+   ========================================================================= */
+
+.pardhu-launcher {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px 8px 10px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.pardhu-launcher:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+.pardhu-launcher b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--teal);
+}
+.pardhu-launcher-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pardhu-launcher-label { white-space: nowrap; }
+
+.pardhu-unread-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background: var(--india-saffron, #FF6B00);
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+
+/* =========================================================================
+   The expanded chat panel
+   ========================================================================= */
+.pardhu-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  width: 380px;
+  max-width: calc(100vw - 24px);
+  height: 580px;
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  animation: pardhu-pop 0.16s ease-out;
+  font-family: var(--font-body);
+}
+
+@keyframes pardhu-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Header ---- */
+.pardhu-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #FF8B33 0%, #FF6B00 35%, #138808 100%);
+  color: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.pardhu-header-id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pardhu-header-avatar {
+  background: rgba(255, 255, 255, 0.18);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+}
+
+.pardhu-header-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+}
+
+.pardhu-header-status {
+  font-size: 11px;
+  opacity: 0.95;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.pardhu-online-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  animation: pardhu-pulse 2s infinite;
+}
+@keyframes pardhu-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+  70%  { box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+.pardhu-header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.pardhu-header-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.pardhu-header-btn:hover { background: rgba(255, 255, 255, 0.28); }
+
+/* ---- Messages ---- */
+.pardhu-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 14px 6px;
+  background: var(--bg-secondary, #f8fafc);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pardhu-msg {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  animation: pardhu-msg-in 0.18s ease-out;
+}
+@keyframes pardhu-msg-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pardhu-msg-user {
+  justify-content: flex-end;
+}
+.pardhu-msg-assistant {
+  justify-content: flex-start;
+}
+
+.pardhu-msg-avatar {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pardhu-msg-bubble {
+  max-width: 78%;
+  padding: 9px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.pardhu-msg-user .pardhu-msg-bubble {
+  background: var(--teal, #0F8A8C);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.pardhu-msg-assistant .pardhu-msg-bubble {
+  background: #fff;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+/* Typing indicator */
+.pardhu-msg-typing {
+  padding: 12px 14px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.pardhu-msg-typing span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted, #94a3b8);
+  animation: pardhu-blink 1.2s infinite;
+}
+.pardhu-msg-typing span:nth-child(2) { animation-delay: 0.18s; }
+.pardhu-msg-typing span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes pardhu-blink {
+  0%, 60%, 100% { opacity: 0.25; transform: translateY(0); }
+  30%           { opacity: 1;    transform: translateY(-3px); }
+}
+
+/* ---- Quick-prompt pills ---- */
+.pardhu-quick {
+  flex-shrink: 0;
+  padding: 8px 14px 4px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+}
+.pardhu-quick-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.pardhu-quick-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.pardhu-quick-pill {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.15s;
+}
+.pardhu-quick-pill:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: rgba(15, 138, 140, 0.05);
+}
+
+/* ---- Input row ---- */
+.pardhu-input-row {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px 8px;
+  background: #fff;
+  border-top: 1px solid var(--border);
+}
+
+.pardhu-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 9px 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.4;
+  resize: none;
+  max-height: 96px;
+  outline: none;
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  transition: border-color 0.15s, background 0.15s;
+}
+.pardhu-input:focus {
+  border-color: var(--teal);
+  background: #fff;
+}
+.pardhu-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.pardhu-send-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: var(--teal, #0F8A8C);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  box-shadow: 0 2px 6px rgba(15, 138, 140, 0.3);
+}
+.pardhu-send-btn:hover:not(:disabled) {
+  background: var(--teal-dark, #0a6e70);
+  transform: translateY(-1px);
+}
+.pardhu-send-btn:disabled {
+  background: var(--border-strong, #cbd5e0);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.pardhu-send-btn svg { transform: translate(-1px, 1px); }
+
+/* ---- Footer ---- */
+.pardhu-footer {
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 6px 10px 8px;
+  background: #fff;
+  border-top: 1px solid var(--border);
+}
+.pardhu-footer a {
+  color: var(--teal);
+  text-decoration: none;
+}
+.pardhu-footer a:hover { text-decoration: underline; }
+
+/* ---- Mobile adjustments ---- */
+@media (max-width: 540px) {
+  .pardhu-panel {
+    width: calc(100vw - 16px);
+    height: calc(100vh - 80px);
+    bottom: 8px;
+    right: 8px;
+  }
+  .pardhu-launcher {
+    bottom: 12px;
+    right: 12px;
+    padding: 8px 14px 8px 8px;
+  }
+}
+
+/* Provider badge under each bot message */
+.pardhu-msg-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  max-width: 78%;
+}
+.pardhu-msg-col .pardhu-msg-bubble { max-width: 100%; }
+.pardhu-msg-provider {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--text-muted);
+  padding-left: 6px;
+  opacity: 0.75;
+}

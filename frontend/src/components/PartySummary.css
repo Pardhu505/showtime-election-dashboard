@@ -1,0 +1,392 @@
+.party-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.alliance-board {
+  display: grid;
+  grid-template-columns: 1fr 0.5fr 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.alliance-card {
+  position: relative;
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--ac) 6%, #fff) 0%,
+      #fff 60%);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--ac);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  min-height: 160px;
+  text-align: left;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+.alliance-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.alliance-card.is-majority {
+  box-shadow: var(--shadow-card-hover),
+              inset 0 0 0 1px color-mix(in srgb, var(--ac) 40%, #fff);
+}
+.alliance-card.is-majority::before {
+  content: '✓';
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ac);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  z-index: 3;
+}
+
+/* Watermark — sits behind everything, anchored to right edge */
+.alliance-watermark {
+  position: absolute;
+  right: -12px;
+  bottom: -12px;
+  width: 140px;
+  height: 140px;
+  pointer-events: none;
+  opacity: 0.18;
+  z-index: 0;
+  transition: opacity 0.2s;
+}
+.alliance-card:hover .alliance-watermark {
+  opacity: 0.28;
+}
+.alliance-silhouette-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Theme-specific watermark tints (slightly stronger so the leader read is clearer) */
+.alliance-card.alliance-nda   .alliance-watermark { opacity: 0.22; }
+.alliance-card.alliance-india .alliance-watermark { opacity: 0.22; }
+.alliance-card.alliance-nda:hover   .alliance-watermark,
+.alliance-card.alliance-india:hover .alliance-watermark { opacity: 0.34; }
+
+/* All actual content sits on top of the watermark */
+.alliance-card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alliance-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.alliance-seats {
+  font-size: 56px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  line-height: 1;
+  letter-spacing: -2px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.alliance-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.alliance-bar {
+  height: 6px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  width: 70%;
+}
+
+.alliance-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.alliance-pct {
+  font-size: 11px;
+  margin-top: 5px;
+  font-weight: 600;
+}
+
+.alliance-majority-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+}
+
+.majority-marker {
+  text-align: center;
+  padding: 16px 8px;
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.majority-num {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.majority-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.party-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 980px) {
+  .party-charts-grid { grid-template-columns: 1fr; }
+  .alliance-board { grid-template-columns: 1fr 1fr; }
+  .majority-marker { grid-column: 1 / -1; order: -1; }
+}
+
+/* ===== Quick Summary Strip ===== */
+.quick-summary-strip {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.qs-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.qs-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.qs-vs {
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.qs-total {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.qs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.qs-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-top-width: 3px;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qs-card-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.qs-party-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  letter-spacing: 0.2px;
+}
+
+.qs-headline {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.qs-won {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  font-family: var(--font-display);
+  letter-spacing: -0.8px;
+}
+
+.qs-of-contested {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.qs-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+
+.qs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.qs-row-label {
+  color: var(--text-muted);
+}
+
+.qs-delta {
+  font-weight: 700;
+  font-size: 12px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.qs-delta.pos { background: rgba(19,136,8,0.12); color: var(--india-green); }
+.qs-delta.neg { background: rgba(229,57,53,0.12); color: #c0392b; }
+.qs-delta.neutral { background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border); }
+
+.qs-strike {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.qs-note {
+  margin-top: 12px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius-sm);
+  line-height: 1.5;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.qs-note span { font-weight: 700; color: var(--gold); flex-shrink: 0; }
+
+/* ===== Constituency Analysis Callout ===== */
+.constituency-callout {
+  padding: 18px 20px;
+}
+
+.cc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.cc-tab-hint {
+  font-size: 11px;
+  color: var(--teal);
+  background: rgba(15,138,140,0.08);
+  border: 1px solid rgba(15,138,140,0.2);
+  padding: 6px 12px;
+  border-radius: 14px;
+  font-weight: 500;
+}
+.cc-tab-hint b { font-weight: 700; }
+
+.cc-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.cc-stat-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.cc-stat-value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.6px;
+  margin-bottom: 6px;
+}
+.cc-stat-value.cc-flip { color: #e53935; }
+.cc-stat-value.cc-hold { color: var(--india-green); }
+.cc-stat-value.cc-turnout { color: var(--teal); }
+.cc-stat-value.cc-swing { color: var(--gold); }
+
+.cc-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.cc-stat-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}

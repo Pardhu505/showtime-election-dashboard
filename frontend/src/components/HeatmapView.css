@@ -1,0 +1,393 @@
+.heatmap-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ===== Top controls ===== */
+.heatmap-controls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+}
+
+.hm-control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heatmap-ctrl-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.hm-seg {
+  display: inline-flex;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 1px;
+}
+
+.hm-seg-btn {
+  padding: 5px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.hm-seg-btn:hover { color: var(--text-primary); }
+.hm-seg-btn.active {
+  background: #fff;
+  color: var(--teal);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+.heatmap-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 12px;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+/* ===== Two-column layout ===== */
+.heatmap-layout {
+  display: grid;
+  grid-template-columns: 1fr 290px;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .heatmap-layout { grid-template-columns: 1fr; }
+}
+
+/* ===== Map ===== */
+.heatmap-map-card {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.heatmap-leaflet {
+  width: 100%;
+  height: 620px;
+  z-index: 0;
+  border-radius: var(--radius);
+}
+
+@media (max-width: 980px) {
+  .heatmap-leaflet { height: 460px; }
+}
+
+/* Make Leaflet attribution + controls match our theme */
+.leaflet-control-zoom a {
+  background: #fff !important;
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--border) !important;
+}
+.leaflet-control-attribution {
+  font-size: 10px !important;
+  background: rgba(255,255,255,0.85) !important;
+  padding: 2px 6px !important;
+}
+
+/* ===== Marker tooltip (Leaflet override) ===== */
+.heatmap-leaflet-tooltip {
+  background: #fff !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-dropdown) !important;
+  padding: 0 !important;
+  min-width: 230px;
+}
+.heatmap-leaflet-tooltip::before {
+  border-top-color: var(--border-strong) !important;
+}
+
+.ht-leaflet-tt {
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-primary);
+}
+
+.ht-leaflet-tt-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.ht-leaflet-tt-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ht-leaflet-tt-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+  font-size: 11px;
+}
+.ht-leaflet-tt-stats > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ht-leaflet-tt-stats span {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-size: 10px;
+  font-weight: 600;
+}
+.ht-leaflet-tt-stats b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ht-leaflet-tt-hint {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 10px;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* ===== Empty / no-coords state ===== */
+.heatmap-no-coords {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 80px 24px;
+  text-align: center;
+}
+.heatmap-no-coords h3 {
+  font-size: 17px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.heatmap-no-coords p {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 380px;
+  line-height: 1.55;
+}
+.heatmap-no-coords code {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--teal);
+}
+
+/* ===== Sidebar ===== */
+.heatmap-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.party-legend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 0;
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+.legend-party {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.legend-count {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  min-width: 28px;
+  text-align: right;
+}
+
+.hm-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hm-scale-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hm-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.stat-item:last-child { border-bottom: none; }
+
+.stat-label { font-size: 12px; color: var(--text-muted); }
+.stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+}
+
+.heatmap-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  background: linear-gradient(135deg, rgba(15,138,140,0.06), rgba(247,165,0,0.04));
+  border-left: 3px solid var(--gold);
+}
+.heatmap-hint strong { color: var(--text-primary); }
+.heatmap-hint em { font-style: italic; color: var(--teal); font-weight: 600; }
+
+/* ===== About this map expandable ===== */
+.heatmap-about {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.heatmap-about summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--teal);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+}
+.heatmap-about summary::-webkit-details-marker { display: none; }
+.heatmap-about summary::before {
+  content: '▸';
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+.heatmap-about[open] summary::before { transform: rotate(90deg); }
+.heatmap-about p {
+  margin-top: 10px;
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+.heatmap-about code {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--teal);
+}
+
+/* ===== Boundary status banner ===== */
+.boundary-status {
+  padding: 8px 14px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  margin-top: -4px;
+}
+.boundary-status.boundary-loading { background: rgba(15,138,140,0.05); border-color: rgba(15,138,140,0.2); color: var(--teal); }
+.boundary-status.boundary-loaded  { background: rgba(19,136,8,0.06); border-color: rgba(19,136,8,0.2); color: var(--text-primary); }
+.boundary-status.boundary-failed,
+.boundary-status.boundary-unsupported {
+  background: rgba(247,165,0,0.06); border-color: rgba(247,165,0,0.25); color: var(--text-secondary);
+}
+.boundary-status b { color: var(--text-primary); }
+
+.bs-spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(15,138,140,0.2);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.bs-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.bs-dot-green { background: var(--india-green); }
+.bs-dot-amber { background: var(--gold); }
+.bs-dot-red   { background: #e53935; }
+
+.bs-link {
+  background: transparent;
+  border: none;
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-left: 4px;
+}

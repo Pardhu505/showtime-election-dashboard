@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: indiavotes-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: indiavotes
+
+  backend:
+    build: ./backend
+    container_name: indiavotes-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGO_URI: mongodb://mongo:27017/indiavotes
+      FRONTEND_URL: http://localhost:3000
+      NODE_ENV: production
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build: ./frontend
+    container_name: indiavotes-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
