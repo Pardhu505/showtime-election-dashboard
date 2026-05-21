@@ -41,7 +41,8 @@ export default function App() {
     (async () => {
       let backendLive = false;
       try {
-        const h = await fetch('/api/health').then(r => r.json()).catch(() => null);
+        const API_BASE = process.env.REACT_APP_API_URL || '/api';
+        const h = await fetch(`${API_BASE}/health`).then(r => r.json()).catch(() => null);
         backendLive = h?.status === 'OK' && h?.mode === 'mongodb';
       } catch { /* ignore */ }
 
