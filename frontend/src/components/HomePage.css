@@ -327,3 +327,51 @@
   .hp-ed-row { flex-wrap: wrap; gap: 8px; }
   .iv-title { font-size: 22px; }
 }
+
+/* ============ Login Modal ============ */
+.hp-login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hp-login-modal-content {
+  width: 90%;
+  max-width: 500px;
+  min-height: 400px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.hp-login-auth-box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.hp-login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.hp-login-success {
+  padding: 20px 0;
+}

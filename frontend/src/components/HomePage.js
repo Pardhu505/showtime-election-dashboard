@@ -16,6 +16,18 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
   const [acState, setAcState] = useState('');
   const [showDetailedResults, setShowDetailedResults] = useState(false);
 
+  // Polling Station dropdown state
+  const [psYear, setPsYear] = useState('');
+  const [psState, setPsState] = useState('');
+  const [psType, setPsType] = useState('Lok Sabha');
+
+  // Login Modal state
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
   const pcStates = useMemo(() => pcYear ? (statesBy[`${pcYear}|Lok Sabha`] || []) : [], [pcYear, statesBy]);
   const acStates = useMemo(() => acYear ? (statesBy[`${acYear}|Assembly`] || []) : [], [acYear, statesBy]);
 
@@ -50,6 +62,25 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
   };
   const handleAcGo = () => {
     if (acYear && acState) onGo(acYear, 'Assembly', acState);
+  };
+
+  const psStates = useMemo(() => psYear ? (statesBy[`${psYear}|${psType}`] || []) : [], [psYear, psType, statesBy]);
+  const psYears = useMemo(() => years, [years]);
+
+  const handlePsGetResult = () => {
+    if (psYear && psState && psType) {
+      setShowLoginModal(true);
+    }
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (loginEmail === 'contact@showtimeconsulting.in' && loginPassword === 'Welcome@123') {
+      setIsLoggedIn(true);
+      setLoginError('');
+    } else {
+      setLoginError('Invalid email or password');
+    }
   };
 
   // Custom pie tooltip
@@ -199,6 +230,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
 
               <button className="hp-alliance-link">Alliances Partywise Details ›</button>
             </div>
+
           </div>
         </section>
 
@@ -251,6 +283,31 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
                   disabled={!acYear || !acState}
                   title="View results"
                 >GO</button>
+              </div>
+            </div>
+
+            {/* Polling Station group */}
+            <div className="hp-ed-group" style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
+              <label className="hp-ed-label">Polling Station Wise Detail Results</label>
+              <div className="hp-ed-row">
+                <select value={psYear} onChange={e => { setPsYear(e.target.value); setPsState(''); }}>
+                  <option value="">Year</option>
+                  {psYears.map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+                <select value={psType} onChange={e => { setPsType(e.target.value); setPsState(''); }}>
+                  <option value="Lok Sabha">Lok Sabha</option>
+                  <option value="Assembly">Assembly</option>
+                </select>
+                <select value={psState} onChange={e => setPsState(e.target.value)} disabled={!psYear}>
+                  <option value="">States</option>
+                  {psStates.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <button
+                  className="btn-go"
+                  style={{ minWidth: '100px' }}
+                  onClick={handlePsGetResult}
+                  disabled={!psYear || !psState}
+                >Get Result</button>
               </div>
             </div>
           </div>
@@ -329,6 +386,53 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
           <StatTile label="Total Candidates" value={nationalSummary?.totalCandidates ? fmt(nationalSummary.totalCandidates) : '8.36K'} accent="var(--saffron)" />
         </div>
       </section>
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <div className="hp-login-modal-overlay">
+          <div className="hp-login-modal-content" style={{ backgroundImage: `url('https://media.gettyimages.com/id/1488650824/video/…20&c=GR6SbIyVsC7E5VMVX48QJcudQ1-jtoP3m5R9htBm45U=')` }}>
+            <div className="hp-login-auth-box">
+              {isLoggedIn ? (
+                <div className="hp-login-success">
+                  <h3 style={{ color: 'var(--teal)', marginBottom: '1.5rem' }}>Data available soon</h3>
+                  <button className="btn-go" onClick={() => { setShowLoginModal(false); setIsLoggedIn(false); setLoginEmail(''); setLoginPassword(''); }}>Close</button>
+                </div>
+              ) : (
+                <form onSubmit={handleLogin} className="hp-login-form">
+                  <h3 style={{ marginBottom: '1.5rem', fontFamily: 'var(--font-display)', color: 'var(--text-primary)' }}>User Login</h3>
+                  <div className="hp-form-group" style={{ marginBottom: '1rem', textAlign: 'left' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Email Address</label>
+                    <input
+                      type="email"
+                      value={loginEmail}
+                      onChange={e => setLoginEmail(e.target.value)}
+                      placeholder="contact@showtimeconsulting.in"
+                      style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)' }}
+                      required
+                    />
+                  </div>
+                  <div className="hp-form-group" style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Password</label>
+                    <input
+                      type="password"
+                      value={loginPassword}
+                      onChange={e => setLoginPassword(e.target.value)}
+                      placeholder="••••••••"
+                      style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)' }}
+                      required
+                    />
+                  </div>
+                  {loginError && <div style={{ color: 'var(--sp)', fontSize: '13px', marginBottom: '1rem', fontWeight: 600 }}>{loginError}</div>}
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button type="submit" className="btn-go" style={{ flex: 1 }}>Login</button>
+                    <button type="button" className="btn-go" style={{ flex: 1, background: 'var(--text-muted)' }} onClick={() => setShowLoginModal(false)}>Cancel</button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
