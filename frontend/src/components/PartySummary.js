@@ -4,6 +4,7 @@ import {
   PieChart, Pie, Cell, Legend
 } from 'recharts';
 import { buildPartyContestComparison } from '../utils/comparison';
+import { classifyParty } from '../data/alliances';
 import './PartySummary.css';
 
 const fmt = n => n >= 10000000 ? (n / 10000000).toFixed(1) + 'Cr' : n >= 100000 ? (n / 100000).toFixed(1) + 'L' : n >= 1000 ? (n / 1000).toFixed(0) + 'K' : n;
@@ -58,11 +59,15 @@ export default function PartySummary({ electionData, previousElection }) {
   // Majority line
   const majority = Math.floor(totalSeats / 2) + 1;
 
-  // Cumulative NDA/INDIA alliance estimation (simplistic)
-  const ndaParties = ['BJP', 'SS', 'JDU', 'NCP', 'TDP', 'RLD'];
-  const indiaParties = ['INC', 'SP', 'AAP', 'TMC', 'DMK', 'NCP(SP)', 'SS(UBT)', 'RJD', 'CPIM', 'CPI(M)'];
-  const ndaSeats = summary.filter(p => ndaParties.includes(p.party)).reduce((s, p) => s + p.seatsWon, 0);
-  const indiaSeats = summary.filter(p => indiaParties.includes(p.party)).reduce((s, p) => s + p.seatsWon, 0);
+  // Cumulative NDA/INDIA alliance estimation (context-aware)
+  const state = electionData.state;
+  const year = electionData.year;
+  const ndaSeats = summary
+    .filter(p => classifyParty(p.partyAbbr || p.party, state, year) === 'NDA')
+    .reduce((s, p) => s + p.seatsWon, 0);
+  const indiaSeats = summary
+    .filter(p => classifyParty(p.partyAbbr || p.party, state, year) === 'INDIA')
+    .reduce((s, p) => s + p.seatsWon, 0);
   const othersSeats = seatsWonTotal - ndaSeats - indiaSeats;
 
   return (

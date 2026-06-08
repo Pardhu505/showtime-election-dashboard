@@ -83,7 +83,7 @@ export default function AllianceMapPanel() {
       const buckets = { NDA: { seats: 0, votes: 0 }, INDIA: { seats: 0, votes: 0 }, OTHER: { seats: 0, votes: 0 } };
       let totalVotes = 0;
       for (const p of doc.partySummary || []) {
-        const a = classifyParty(p.partyAbbr || p.party);
+        const a = classifyParty(p.partyAbbr || p.party, doc.state, year);
         buckets[a].seats += p.seatsWon || 0;
         buckets[a].votes += p.totalVotes || 0;
         totalVotes += p.totalVotes || 0;
