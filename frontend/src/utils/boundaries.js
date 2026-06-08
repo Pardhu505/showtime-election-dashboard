@@ -27,7 +27,9 @@ let allIndiaPCPromise = null; // memoised datameet fetch
 const normName = (s) =>
   String(s || '')
     .toUpperCase()
-    .replace(/\([^)]*\)/g, '')
+    // Selectively remove reservation suffixes while preserving descriptors like (West), (East)
+    .replace(/\s*\((SC|ST|GEN|RESERVED)\)\s*/g, '')
+    .replace(/\s*\((?!WEST|EAST|NORTH|SOUTH|CENTRAL|RURAL|URBAN|CITY|METRO)[^)]*\)\s*/g, '')
     .replace(/[\.,'`"&]/g, '')
     .replace(/\s+/g, '')
     .trim();
@@ -51,14 +53,18 @@ const ALIASES = {
   FATEHGARHSAHIB: ['PHILLAUR'],
   FIROZPUR: ['FEROZEPUR', 'FIROZEPUR'],
   BATHINDA: ['BHATINDA'],
+  DRRADHAKRISHNANNAGAR: ['DRRADHAKRISHNANNAGA'],
+  TIRUCHIRAPPALLIWEST: ['TIRUCHIRAPPALLI'], // Fallback if IDs missing
+  TIRUCHIRAPPALLIEAST: ['TIRUCHIRAPPALLI'],
+  AMETHI: ['CHHATRAPATISHAHUJIMAHARAJNAGAR'],
+  RAEBARELI: ['RAEBAREILLY'],
 };
 
 function nameMatches(a, b) {
   if (a === b) return true;
   if ((ALIASES[a] || []).includes(b)) return true;
   if ((ALIASES[b] || []).includes(a)) return true;
-  // First-6-char heuristic — catches small spelling variations
-  if (a.length >= 6 && b.length >= 6 && a.slice(0, 6) === b.slice(0, 6)) return true;
+  // Heuristic removed to avoid false positives (e.g. "Tiruchirappalli East" matching "Tiruchirappalli West" on first 6 chars)
   return false;
 }
 
@@ -107,6 +113,7 @@ const readProp = (props, keys) => {
 const readStateProp = (p) => readProp(p, ['ST_NAME', 'st_name', 'STATE', 'state', 'StateName']);
 const readACProp = (p) => readProp(p, ['AC_NAME', 'ac_name', 'AC_NAME_E', 'NAME', 'name', 'Constituency']);
 const readPCProp = (p) => readProp(p, ['PC_NAME', 'pc_name', 'PCNAME', 'NAME', 'name', 'Constituency']);
+const readIDProp = (p) => readProp(p, ['AC_NO', 'ac_no', 'PC_NO', 'pc_no', 'ID', 'id', 'CON_NO', 'ConstituencyNo']);
 
 // ---- fetching --------------------------------------------------------------
 async function tryFetch(urls) {
@@ -216,25 +223,43 @@ export async function loadBoundariesForState(state, type) {
  */
 export function matchFeatures(constituencies, features, type) {
   const readName = type === 'Lok Sabha' ? readPCProp : readACProp;
+
+  // Build lookups for both ID and Name
+  const byID = new Map();
   const byName = new Map();
+
   for (const f of features) {
-    const key = normName(readName(f.properties || {}));
-    if (key && !byName.has(key)) byName.set(key, f);
+    const props = f.properties || {};
+    const nameKey = normName(readName(props));
+    const rawID = readIDProp(props);
+    const idKey = (rawID !== null && rawID !== undefined) ? String(rawID).trim() : '';
+
+    if (nameKey && !byName.has(nameKey)) byName.set(nameKey, f);
+    if (idKey && idKey !== '0' && !byID.has(idKey)) byID.set(idKey, f);
   }
+
   return constituencies.map(c => {
     const cKey = normName(c.constituencyName);
-    let f = byName.get(cKey);
+    const cID = String(c.constituencyNo || '').trim();
+
+    // 1. Try ID match first (most reliable)
+    let f = (cID && cID !== '0') ? byID.get(cID) : null;
+
+    // 2. Try exact name match
+    if (!f) f = byName.get(cKey);
+
+    // 3. Try alias / prefix match
     if (!f) {
-      // Try alias / prefix match
       for (const [fName, feat] of byName) {
         if (nameMatches(cKey, fName)) { f = feat; break; }
       }
     }
+
+    // 4. Last-resort fuzzy match
     if (!f) {
-      // Last-resort fuzzy match — handles transliteration variants like
-      // Tirupati/Thirupathi, Aruku/Araku, Kurnoolu/Kurnool.
       f = fuzzyMatchFeature(cKey, byName);
     }
+
     return { constituency: c, feature: f || null };
   });
 }
