@@ -311,8 +311,14 @@ export const NATIONAL_PC_2024 = {
     { name: 'OTHERS', value: 11.44, seats: 17, contested: 0, totalVotes: 75302783, color: '#94a3b8' },
   ],
   alliances: [
-    { name: 'NDA',    seats: 292, voteShare: 43.6, contestedVoteShare: 44.3, color: PARTY_COLORS.BJP },
-    { name: 'I.N.D.I.A', seats: 230, voteShare: 36.7, contestedVoteShare: 37.2, color: PARTY_COLORS.INC },
+    { name: 'NDA (governing)', seats: 293, voteShare: 43.6, contestedVoteShare: 44.3, color: PARTY_COLORS.BJP, constituents: 'BJP 240, TDP 16, JD(U) 12, Shiv Sena (Shinde) 7, LJP-RV 5, + others' },
+    { name: 'INDIA bloc (opposition)', seats: 234, voteShare: 36.7, contestedVoteShare: 37.2, color: PARTY_COLORS.INC, constituents: 'Congress 99, SP 37, TMC 29, DMK 22, + others' },
+    { name: 'Others / unaligned', seats: 16, voteShare: 19.7, contestedVoteShare: 18.5, color: '#94a3b8', constituents: 'YSRCP, independents, smaller parties' },
+  ],
+  rajyaSabha: [
+    { name: 'NDA', seats: 135, notes: 'Includes 7 nominated members aligned with the government', color: PARTY_COLORS.BJP },
+    { name: 'INDIA bloc', seats: 80, notes: 'Congress is the largest single component', color: PARTY_COLORS.INC },
+    { name: 'Unattached / others', seats: 29, notes: 'Not aligned to either bloc', color: '#94a3b8' },
   ],
   detailedDefaultState: 'Uttar Pradesh',
 };
