@@ -29,8 +29,21 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
     [years, statesBy]
   );
 
-  // Pie data (top parties + Others bucket)
-  const pieData = nationalSummary?.parties || [];
+  // Full detailed list for the table
+  const fullParties = nationalSummary?.parties || [];
+
+  // Derived simplified data for the Pie chart (Top 5 + others)
+  const pieData = useMemo(() => {
+    if (fullParties.length <= 6) return fullParties;
+    const top = fullParties.slice(0, 5);
+    const rest = fullParties.slice(5);
+    const oVal = rest.reduce((s, p) => s + p.value, 0);
+    const oSeats = rest.reduce((s, p) => s + (p.seats || 0), 0);
+    return [
+      ...top,
+      { name: 'OTHERS', value: Number(oVal.toFixed(2)), seats: oSeats, color: '#94a3b8' }
+    ];
+  }, [fullParties]);
 
   const handlePcGo = () => {
     if (pcYear && pcState) onGo(pcYear, 'Lok Sabha', pcState);
@@ -111,10 +124,11 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
                       <th style={{ textAlign: 'right' }}>Seats</th>
                       <th style={{ textAlign: 'right' }}>Vote %</th>
                       <th style={{ textAlign: 'right' }}>Contested</th>
+                      <th style={{ textAlign: 'right' }}>Total Votes</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {pieData.map(p => (
+                    {fullParties.map(p => (
                       <tr key={p.name}>
                         <td>
                           <span className="party-dot" style={{ background: p.color, marginRight: 6 }} />
@@ -123,6 +137,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
                         <td style={{ textAlign: 'right', fontWeight: 600 }}>{p.seats ?? '—'}</td>
                         <td style={{ textAlign: 'right' }}>{p.value}%</td>
                         <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{p.contested ?? '—'}</td>
+                        <td style={{ textAlign: 'right' }}>{p.totalVotes ? fmt(p.totalVotes) : '—'}</td>
                       </tr>
                     ))}
                   </tbody>
