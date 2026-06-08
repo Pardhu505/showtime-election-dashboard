@@ -21,10 +21,16 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
   const { constituencies, state, type } = electionData;
 
   const plottable = useMemo(
-    () => constituencies.filter(c => typeof c.latitude === 'number' && typeof c.longitude === 'number'),
+    () => constituencies.filter(c => typeof c.latitude === 'number' && typeof c.longitude === 'number' && !isNaN(c.latitude)),
     [constituencies]
   );
-  const noCoords = plottable.length === 0;
+
+  const showEmptyState = useMemo(() => {
+    if (plottable.length > 0) return false;
+    if (boundaries.status === 'loading') return false;
+    if (boundaries.status === 'loaded' && boundaries.matched?.some(m => m.feature)) return false;
+    return true;
+  }, [plottable, boundaries]);
 
   // -----------------------------------------------------------------
   // Try to fetch real boundaries whenever state/type changes.
@@ -43,12 +49,12 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
             message: `No boundaries found for "${state}" in the source.` });
           return;
         }
-        const matched = matchFeatures(plottable, features, type);
+        const matched = matchFeatures(constituencies, features, type);
         const hitCount = matched.filter(m => m.feature).length;
         const kindLabel = type === 'Lok Sabha' ? 'PC' : 'AC';
         setBoundaries({
           status: 'loaded', matched, source,
-          message: `${hitCount} of ${plottable.length} ${kindLabel}s matched to ${source}.`,
+          message: `${hitCount} of ${constituencies.length} ${kindLabel}s matched to ${source}.`,
         });
       })
       .catch(err => {
@@ -61,7 +67,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
           message: `${reason} Using Voronoi approximation instead.` });
       });
     return () => { cancelled = true; };
-  }, [state, type, plottable, retryToken]);
+  }, [state, type, constituencies, retryToken]);
 
   // -----------------------------------------------------------------
   // Voronoi fallback (also used when "Choropleth" is on but real boundaries
@@ -113,29 +119,38 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
   };
 
   // ---- Legend / stats ----
+  const mappedList = useMemo(() => {
+    if (boundaries.status === 'loaded' && boundaries.matched) {
+      return boundaries.matched
+        .filter(m => m.feature || (typeof m.constituency.latitude === 'number' && typeof m.constituency.longitude === 'number'))
+        .map(m => m.constituency);
+    }
+    return plottable;
+  }, [boundaries, plottable]);
+
   const parties = useMemo(() => {
     const pm = {};
-    for (const c of plottable) {
+    for (const c of mappedList) {
       const p = c.winner?.party;
       if (!p) continue;
       if (!pm[p]) pm[p] = { party: p, color: c.winner.partyColor || '#666', count: 0 };
       pm[p].count++;
     }
     return Object.values(pm).sort((a, b) => b.count - a.count);
-  }, [plottable]);
+  }, [mappedList]);
 
   const stats = useMemo(() => {
-    if (!plottable.length) return null;
-    const turnouts = plottable.map(c => c.turnout || 0);
-    const margins  = plottable.map(c => c.winner?.margin || 0);
+    if (!mappedList.length) return null;
+    const turnouts = mappedList.map(c => c.turnout || 0);
+    const margins  = mappedList.map(c => c.winner?.margin || 0);
     return {
-      seats:          plottable.length,
+      seats:          mappedList.length,
       avgTurnout:     (turnouts.reduce((s, x) => s + x, 0) / turnouts.length).toFixed(1),
       highestMargin:  Math.max(...margins),
       closestContest: Math.min(...margins),
-      totalVotes:     plottable.reduce((s, c) => s + (c.totalVotesCast || c.winner?.votes || 0), 0),
+      totalVotes:     mappedList.reduce((s, c) => s + (c.totalVotesCast || c.winner?.votes || 0), 0),
     };
-  }, [plottable]);
+  }, [mappedList]);
 
   // ---- Map setup ----
   const TILES = {
@@ -187,7 +202,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
           <SegBtn active={mapStyle === 'dark'}  onClick={() => setMapStyle('dark')}>Dark</SegBtn>
         </ControlGroup>
         <span className="heatmap-count">
-          {plottable.length} of {constituencies.length} seats mapped
+          {mappedList.length} of {constituencies.length} seats mapped
         </span>
       </div>
 
@@ -214,13 +229,12 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
 
       <div className="heatmap-layout">
         <div className="card heatmap-grid-card heatmap-map-card">
-          {noCoords ? (
+          {showEmptyState ? (
             <div className="heatmap-no-coords">
               <div className="empty-state-icon">🗺️</div>
-              <h3>No coordinates available</h3>
+              <h3>No map data available</h3>
               <p>
-                None of the {constituencies.length} constituencies in this dataset have latitude/longitude values,
-                so they can't be plotted on a map.
+                None of the {constituencies.length} constituencies in this dataset have coordinates or matching boundary shapes.
               </p>
             </div>
           ) : (
@@ -235,7 +249,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
               <TileLayer url={TILES[mapStyle].url} attribution={TILES[mapStyle].attr} />
               <ZoomControl position="topright" />
               <FitBounds points={plottable} polygons={useReal
-                ? boundaries.matched.map(m => m.feature ? geometryToPositions(m.feature.geometry) : null).flat(2).filter(Array.isArray)
+                ? boundaries.matched.map(m => m.feature ? geometryToPositions(m.feature.geometry) : null).flat(1).filter(Array.isArray)
                 : voronoiPolys}
               />
 
@@ -269,7 +283,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
 
               {/* Unmatched constituencies — drop a small marker so they're still clickable */}
               {useReal && boundaries.matched.map(({ constituency: c, feature }, i) => {
-                if (feature) return null;
+                if (feature || typeof c.latitude !== 'number' || isNaN(c.latitude)) return null;
                 return (
                   <CircleMarker
                     key={`unmatched-${c.constituencyName}`}
@@ -424,21 +438,33 @@ function FitBounds({ points, polygons }) {
   const lastSig = useRef('');
 
   useEffect(() => {
-    if (!points || !points.length) return;
-    const sig = points.length + ':' + points[0].constituencyName + ':' + points[0].state + ':' + (polygons ? 'p' : 'm');
+    const hasPoints = points && points.length > 0;
+    const hasPolys = polygons && polygons.length > 0;
+    if (!hasPoints && !hasPolys) return;
+
+    const sig = (points?.length || 0) + '-' + (polygons?.length || 0) + '-' + (points?.[0]?.constituencyName || '') + '-' + (points?.[0]?.state || '');
     if (sig === lastSig.current) return;
     lastSig.current = sig;
 
-    let lats = points.map(p => p.latitude);
-    let lngs = points.map(p => p.longitude);
-    if (polygons && polygons.length) {
+    let lats = [];
+    let lngs = [];
+
+    if (hasPoints) {
+      lats = points.map(p => p.latitude).filter(v => typeof v === 'number' && !isNaN(v));
+      lngs = points.map(p => p.longitude).filter(v => typeof v === 'number' && !isNaN(v));
+    }
+
+    if (hasPolys) {
       for (const ring of polygons) {
         if (!ring || !ring.length) continue;
         for (const pt of ring) {
-          if (Array.isArray(pt) && pt.length >= 2) { lats.push(pt[0]); lngs.push(pt[1]); }
+          if (Array.isArray(pt) && typeof pt[0] === 'number') {
+            lats.push(pt[0]); lngs.push(pt[1]);
+          }
         }
       }
     }
+
     if (!lats.length || !lngs.length) return;
     const bounds = [[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]];
     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 9 });

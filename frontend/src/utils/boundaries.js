@@ -24,15 +24,28 @@ const inflight = new Map();   // de-dupe parallel fetches
 let allIndiaPCPromise = null; // memoised datameet fetch
 
 // ---- name normalisation ----------------------------------------------------
-const normName = (s) =>
-  String(s || '')
-    .toUpperCase()
-    // Selectively remove reservation suffixes while preserving descriptors like (West), (East)
-    .replace(/\s*\((SC|ST|GEN|RESERVED)\)\s*/g, '')
-    .replace(/\s*\((?!WEST|EAST|NORTH|SOUTH|CENTRAL|RURAL|URBAN|CITY|METRO)[^)]*\)\s*/g, '')
-    .replace(/[\.,'`"&]/g, '')
+const normName = (s) => {
+  let name = String(s || '').toUpperCase();
+  // 1. Remove numeric prefixes (e.g., "120-Ichchapuram" -> "Ichchapuram")
+  name = name.replace(/^\d+[\s\-\.]*/, '');
+
+  // 2. Broadly remove reservation tags using boundary markers to avoid partial matches
+  name = name.replace(/\b(SC|ST|GEN|RESERVED)\b/g, '');
+
+  // 3. Preserve specific descriptors by converting parenthesized versions to plain text
+  // (e.g., "Tiruchirappalli (West)" -> "TIRUCHIRAPPALLI WEST")
+  const preserved = ['WEST', 'EAST', 'NORTH', 'SOUTH', 'CENTRAL', 'RURAL', 'URBAN', 'CITY', 'METRO'];
+  preserved.forEach(p => {
+    name = name.replace(new RegExp(`\\(${p}\\)`, 'g'), ` ${p} `);
+  });
+
+  // 4. Final cleanup: strip all remaining parentheses, common punctuation, and collapse whitespace
+  return name
+    .replace(/[\(\)]/g, ' ')
+    .replace(/[\.,'`"&\-]/g, '')
     .replace(/\s+/g, '')
     .trim();
+};
 
 const stateSlug = (s) => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
 
@@ -228,11 +241,13 @@ export function matchFeatures(constituencies, features, type) {
   const byID = new Map();
   const byName = new Map();
 
+  // Helper to normalize IDs (strip leading zeros)
+  const normID = (id) => String(id || '').replace(/^0+/, '').trim();
+
   for (const f of features) {
     const props = f.properties || {};
     const nameKey = normName(readName(props));
-    const rawID = readIDProp(props);
-    const idKey = (rawID !== null && rawID !== undefined) ? String(rawID).trim() : '';
+    const idKey = normID(readIDProp(props));
 
     if (nameKey && !byName.has(nameKey)) byName.set(nameKey, f);
     if (idKey && idKey !== '0' && !byID.has(idKey)) byID.set(idKey, f);
@@ -240,7 +255,7 @@ export function matchFeatures(constituencies, features, type) {
 
   return constituencies.map(c => {
     const cKey = normName(c.constituencyName);
-    const cID = String(c.constituencyNo || '').trim();
+    const cID = normID(c.constituencyNo);
 
     // 1. Try ID match first (most reliable)
     let f = (cID && cID !== '0') ? byID.get(cID) : null;
