@@ -105,20 +105,35 @@ function normPartyKey(s) {
   return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 }
 
-export function classifyParty(abbr) {
+// ---- state-name canonicalisation (for matching GeoJSON → our data) -------
+
+export const normStateKey = (s) =>
+  String(s || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z]/g, '');
+
+export function classifyParty(abbr, state = '', year = null) {
   if (!abbr) return 'OTHER';
   const k = normPartyKey(abbr);
   if (!k) return 'OTHER';
+
+  // Punjab specific overrides — as requested by user to reflect local
+  // alliance structures across all election years (2017-2024).
+  //
+  // Per user's provided data:
+  //   - NDA bloc (SAD + BJP) is shown across all years (2017-2024).
+  //   - INDIA bloc (AAP + INC) is shown for 2022 and 2024.
+  //   - AAP + INC are "n/a" (OTHER) for 2017 and 2019.
+  if (normStateKey(state) === 'punjab') {
+    if (['SAD', 'BJP'].includes(k)) return 'NDA';
+    if (['INC', 'AAP', 'AAAP'].includes(k)) {
+      return (year && year >= 2022) ? 'INDIA' : 'OTHER';
+    }
+  }
+
   if (NDA_PARTIES.has(k))   return 'NDA';
   if (INDIA_PARTIES.has(k)) return 'INDIA';
   if (OTHER_PARTIES.has(k)) return 'OTHER';
   return 'OTHER';
 }
-
-// ---- state-name canonicalisation (for matching GeoJSON → our data) -------
-
-export const normStateKey = (s) =>
-  String(s || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z]/g, '');
 
 /**
  * Pull the state name out of a GeoJSON feature's properties. The Highcharts
