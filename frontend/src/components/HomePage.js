@@ -145,28 +145,58 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
               </div>
             )}
 
-            {/* Alliance table */}
-            <div className="hp-alliance-table table-wrap">
-              <table className="table-compact">
-                <thead>
-                  <tr>
-                    <th>Alliance</th>
-                    <th style={{ textAlign: 'right' }}>Seats</th>
-                    <th style={{ textAlign: 'right' }}>Votes %</th>
-                    <th style={{ textAlign: 'right' }}>Contested Voteshare</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(nationalSummary?.alliances || []).map(a => (
-                    <tr key={a.name}>
-                      <td style={{ fontWeight: 600, color: a.color }}>{a.name}</td>
-                      <td style={{ textAlign: 'right', fontWeight: 700 }}>{a.seats}</td>
-                      <td style={{ textAlign: 'right' }}>{fmtPct(a.voteShare)}</td>
-                      <td style={{ textAlign: 'right' }}>{fmtPct(a.contestedVoteShare)}</td>
+            {/* Alliance Tables */}
+            <div className="hp-alliances-container">
+              {/* Lok Sabha */}
+              <div className="hp-alliance-table table-wrap">
+                <h3 className="hp-table-title">Lok Sabha — 543 seats (majority mark: 272)</h3>
+                <table className="table-compact">
+                  <thead>
+                    <tr>
+                      <th>Alliance</th>
+                      <th style={{ textAlign: 'right' }}>Seats</th>
+                      <th style={{ textAlign: 'right' }}>Votes %</th>
+                      <th style={{ textAlign: 'right' }}>Contested Voteshare</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {(nationalSummary?.alliances || []).map(a => (
+                      <tr key={a.name}>
+                        <td style={{ fontWeight: 600, color: a.color }}>{a.name}</td>
+                        <td style={{ textAlign: 'right', fontWeight: 700 }}>{a.seats}</td>
+                        <td style={{ textAlign: 'right' }}>{fmtPct(a.voteShare)}</td>
+                        <td style={{ textAlign: 'right' }}>{fmtPct(a.contestedVoteShare)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Rajya Sabha */}
+              {nationalSummary?.rajyaSabha && (
+                <div className="hp-alliance-table table-wrap" style={{ marginTop: '1.5rem' }}>
+                  <h3 className="hp-table-title">Rajya Sabha — 245 seats</h3>
+                  <table className="table-compact">
+                    <thead>
+                      <tr>
+                        <th>Alliance</th>
+                        <th style={{ textAlign: 'right' }}>Seats</th>
+                        <th style={{ textAlign: 'right' }}>Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {nationalSummary.rajyaSabha.map(a => (
+                        <tr key={a.name}>
+                          <td style={{ fontWeight: 600, color: a.color }}>{a.name}</td>
+                          <td style={{ textAlign: 'right', fontWeight: 700 }}>~{a.seats}</td>
+                          <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{a.notes}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
               <button className="hp-alliance-link">Alliances Partywise Details ›</button>
             </div>
           </div>
@@ -292,6 +322,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
         </h2>
         <div className="hp-stats-grid">
           <StatTile label="Total Lok Sabha Seats" value={nationalSummary?.totalSeats || 543} accent="var(--teal)" />
+          <StatTile label="Total Rajya Sabha Seats" value={245} accent="var(--india-blue)" />
           <StatTile label="Total States / UTs" value={nationalSummary?.totalStates || 36} accent="var(--gold)" />
           <StatTile label="Total Eligible Voters" value={nationalSummary?.totalVoters ? fmt(nationalSummary.totalVoters) : '96.8Cr'} accent="var(--india-blue)" />
           <StatTile label="Voter Turnout" value={`${nationalSummary?.turnout ?? 65.8}%`} accent="var(--india-green)" />

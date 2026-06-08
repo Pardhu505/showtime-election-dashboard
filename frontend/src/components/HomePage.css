@@ -28,6 +28,16 @@
   gap: 16px;
 }
 
+.hp-table-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  padding: 0 4px;
+  border-left: 3px solid var(--teal);
+  font-family: var(--font-display);
+}
+
 .hp-pie-wrap {
   position: relative;
 }
@@ -275,7 +285,7 @@
 
 .hp-stats-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 12px;
 }
 
