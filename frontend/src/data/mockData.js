@@ -251,15 +251,6 @@ const ls2019_MH = [
   mkSeat(8,'Wardha','Maharashtra',[mkC('Ramdas Tadas','BJP',545000),mkC('Charanjeet Singh Sapra','INC',467000)],20.75,78.60),
 ];
 
-export const MOCK_DB = {
-  '2024|Assembly|Andhra Pradesh': AP_2024_AC,
-  '2024|Lok Sabha|Uttar Pradesh': { year:2024, type:'Lok Sabha', state:'Uttar Pradesh', totalSeats:80, status:'Declared', constituencies:up2024cs, partySummary:buildPS(up2024cs) },
-  '2024|Lok Sabha|Maharashtra': { year:2024, type:'Lok Sabha', state:'Maharashtra', totalSeats:48, status:'Declared', constituencies:mh2024cs, partySummary:buildPS(mh2024cs) },
-  '2023|Assembly|Madhya Pradesh': { year:2023, type:'Assembly', state:'Madhya Pradesh', totalSeats:230, status:'Declared', constituencies:mp2023cs, partySummary:buildPS(mp2023cs) },
-  '2019|Lok Sabha|Uttar Pradesh': { year:2019, type:'Lok Sabha', state:'Uttar Pradesh', totalSeats:80, status:'Declared', constituencies:ls2019_UP, partySummary:buildPS(ls2019_UP) },
-  '2019|Lok Sabha|Maharashtra': { year:2019, type:'Lok Sabha', state:'Maharashtra', totalSeats:48, status:'Declared', constituencies:ls2019_MH, partySummary:buildPS(ls2019_MH) },
-};
-
 const AP_2024_AC = {
   "year": 2024,
   "type": "Assembly",
@@ -29426,6 +29417,17 @@ const AP_2024_AC = {
     }
   ]
 };
+
+export const MOCK_DB = {
+  '2024|Assembly|Andhra Pradesh': AP_2024_AC,
+  '2024|Lok Sabha|Uttar Pradesh': { year:2024, type:'Lok Sabha', state:'Uttar Pradesh', totalSeats:80, status:'Declared', constituencies:up2024cs, partySummary:buildPS(up2024cs) },
+  '2024|Lok Sabha|Maharashtra': { year:2024, type:'Lok Sabha', state:'Maharashtra', totalSeats:48, status:'Declared', constituencies:mh2024cs, partySummary:buildPS(mh2024cs) },
+  '2023|Assembly|Madhya Pradesh': { year:2023, type:'Assembly', state:'Madhya Pradesh', totalSeats:230, status:'Declared', constituencies:mp2023cs, partySummary:buildPS(mp2023cs) },
+  '2019|Lok Sabha|Uttar Pradesh': { year:2019, type:'Lok Sabha', state:'Uttar Pradesh', totalSeats:80, status:'Declared', constituencies:ls2019_UP, partySummary:buildPS(ls2019_UP) },
+  '2019|Lok Sabha|Maharashtra': { year:2019, type:'Lok Sabha', state:'Maharashtra', totalSeats:48, status:'Declared', constituencies:ls2019_MH, partySummary:buildPS(ls2019_MH) },
+};
+
+
 
 export const YEARS = [2024, 2023, 2022, 2019, 2014];
 export const TYPES = ['Lok Sabha', 'Assembly'];
