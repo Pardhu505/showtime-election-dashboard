@@ -6,6 +6,7 @@ const XLSX = require('xlsx');
 const mongoose = require('mongoose');
 const getElectionModel = require('../models/Election');
 const getCasteModel = require('../models/Caste');
+const getBoothModel = require('../models/Booth');
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -220,6 +221,55 @@ router.post('/caste', upload.single('file'), async (req, res) => {
       updated: result.modifiedCount,
       totalRows: docs.length,
       message: `Saved ${docs.length} caste rows (${result.upsertedCount} new, ${result.modifiedCount} updated).`,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// =========================================================================
+// POST /api/upload/booth — upload booth-level JSON data
+// Expected format: JSON array of objects. Collection named as State_Year_Type
+// =========================================================================
+router.post('/booth', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    if (mongoose.connection.readyState !== 1 || !req.app.locals.dbs) {
+      return res.status(503).json({ error: 'MongoDB is not connected.' });
+    }
+
+    const { year, type, state } = req.body;
+    if (!year || !type || !state) return res.status(400).json({ error: 'year, type, state required' });
+
+    let records = [];
+    const ext = req.file.originalname.split('.').pop().toLowerCase();
+    if (ext === 'json') {
+      records = JSON.parse(req.file.buffer.toString());
+    } else {
+      return res.status(400).json({ error: 'Only JSON files supported for booth-level data' });
+    }
+
+    if (!Array.isArray(records)) {
+      return res.status(400).json({ error: 'JSON must be an array of objects' });
+    }
+
+    // Organised collection name: State_Year_Type (normalised)
+    const norm = (s) => s.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    const collectionName = `${norm(state)}_${norm(year)}_${norm(type)}`;
+
+    const Booth = getBoothModel(req.app.locals.dbs.booth, collectionName);
+
+    // For booth level data, we usually want to clear and replace, or just insert new ones.
+    // The request says "the data should get save in MongoDB in organised folder".
+    // We'll insert all records.
+    await Booth.deleteMany({}); // Clear existing for this specific dataset
+    const result = await Booth.insertMany(records);
+
+    res.json({
+      success: true,
+      count: result.length,
+      collection: collectionName,
+      message: `Successfully uploaded ${result.length} booth records to ${collectionName}.`,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

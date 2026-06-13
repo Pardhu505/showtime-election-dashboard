@@ -23,6 +23,7 @@ const electionRoutes  = require('./routes/elections');
 const candidateRoutes = require('./routes/candidates');
 const uploadRoutes    = require('./routes/upload');
 const casteRoutes     = require('./routes/caste');
+const boothRoutes     = require('./routes/booth');
 const chatRoutes      = require('./routes/chat');
 
 const app  = express();
@@ -38,6 +39,7 @@ const DB_NAMES = {
   loksabha: process.env.DB_LOKSABHA || 'loksabha_db',
   assembly: process.env.DB_ASSEMBLY || 'assembly_db',
   caste:    process.env.DB_CASTE    || 'caste_db',
+  booth:    process.env.DB_BOOTH    || 'booth_db',
 };
 
 // Rate limiting
@@ -56,6 +58,7 @@ app.use('/api/elections',  electionRoutes);
 app.use('/api/candidates', candidateRoutes);
 app.use('/api/upload',     uploadRoutes);
 app.use('/api/caste',      casteRoutes);
+app.use('/api/booth',      boothRoutes);
 app.use('/api/chat',       chatRoutes);
 
 // Health check
@@ -83,6 +86,7 @@ async function bootstrap() {
       loksabha: baseConn.useDb(DB_NAMES.loksabha, { useCache: true }),
       assembly: baseConn.useDb(DB_NAMES.assembly, { useCache: true }),
       caste:    baseConn.useDb(DB_NAMES.caste,    { useCache: true }),
+      booth:    baseConn.useDb(DB_NAMES.booth,    { useCache: true }),
     };
     console.log(`✅ MongoDB connected — databases ready: ${Object.values(DB_NAMES).join(', ')}`);
   } catch (err) {

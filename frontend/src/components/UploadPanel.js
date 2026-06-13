@@ -9,6 +9,7 @@ Varanasi,PC,,Ajay Rai,INC,INC,#00A651,467000,41.3,No,M,58,0,25.32,82.97
 Varanasi,PC,,Sanjay Chaurasiya,SP,SP,#E53935,231000,4.5,No,M,52,0,25.32,82.97`;
 
 export default function UploadPanel() {
+  const [activeMode, setActiveMode] = useState('election'); // 'election' | 'booth'
   const [file, setFile] = useState(null);
   const [form, setForm] = useState({ year: '', type: '', state: '', phase: '1' });
   const [status, setStatus] = useState(null); // null | 'uploading' | 'success' | 'error'
@@ -48,14 +49,20 @@ export default function UploadPanel() {
       fd.append('year', form.year);
       fd.append('type', form.type);
       fd.append('state', form.state);
-      fd.append('phase', form.phase);
 
-      const res = await fetch('/api/upload/election', { method: 'POST', body: fd });
+      let endpoint = '/api/upload/election';
+      if (activeMode === 'election') {
+        fd.append('phase', form.phase);
+      } else {
+        endpoint = '/api/upload/booth';
+      }
+
+      const res = await fetch(endpoint, { method: 'POST', body: fd });
       const data = await res.json();
 
       if (res.ok) {
         setStatus('success');
-        setMessage(`✅ Successfully uploaded ${data.message || 'election data'}.`);
+        setMessage(`✅ Successfully uploaded ${data.message || 'data'}.`);
         setFile(null);
       } else {
         setStatus('error');
@@ -78,14 +85,31 @@ export default function UploadPanel() {
     <div className="upload-panel fade-in">
       <div className="upload-hero">
         <div className="upload-hero-icon">📂</div>
-        <h2 className="upload-hero-title">Upload Election Dataset</h2>
-        <p className="upload-hero-sub">Upload CSV, Excel, or JSON files to populate the election results database</p>
+        <h2 className="upload-hero-title">Data Upload Center</h2>
+        <p className="upload-hero-sub">Populate the election dashboard with results or booth-level details</p>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem', gap: '1rem' }}>
+        <button
+          className={`btn ${activeMode === 'election' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => { setActiveMode('election'); setStatus(null); setMessage(''); }}
+        >
+          Election Results
+        </button>
+        <button
+          className={`btn ${activeMode === 'booth' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => { setActiveMode('booth'); setStatus(null); setMessage(''); }}
+        >
+          Booth Level Data
+        </button>
       </div>
 
       <div className="upload-grid">
         {/* Upload Form */}
         <div className="card upload-form-card">
-          <div className="section-title" style={{ marginBottom: 20 }}>Dataset Details</div>
+          <div className="section-title" style={{ marginBottom: 20 }}>
+            {activeMode === 'election' ? 'Election Dataset Details' : 'Booth Level Data Details'}
+          </div>
 
           <div className="upload-form-grid">
             <div className="filter-group">
@@ -115,17 +139,19 @@ export default function UploadPanel() {
                 onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
               />
             </div>
-            <div className="filter-group">
-              <label className="filter-label">Phase (optional)</label>
-              <input
-                className="upload-input"
-                type="number"
-                placeholder="1"
-                value={form.phase}
-                onChange={e => setForm(f => ({ ...f, phase: e.target.value }))}
-                min="1" max="7"
-              />
-            </div>
+            {activeMode === 'election' && (
+              <div className="filter-group">
+                <label className="filter-label">Phase (optional)</label>
+                <input
+                  className="upload-input"
+                  type="number"
+                  placeholder="1"
+                  value={form.phase}
+                  onChange={e => setForm(f => ({ ...f, phase: e.target.value }))}
+                  min="1" max="7"
+                />
+              </div>
+            )}
           </div>
 
           {/* Drop zone */}
@@ -136,7 +162,13 @@ export default function UploadPanel() {
             onDrop={handleDrop}
             onClick={() => fileRef.current?.click()}
           >
-            <input ref={fileRef} type="file" accept=".csv,.xlsx,.xls,.json" style={{ display: 'none' }} onChange={e => handleFile(e.target.files[0])} />
+            <input
+              ref={fileRef}
+              type="file"
+              accept={activeMode === 'election' ? ".csv,.xlsx,.xls,.json" : ".json"}
+              style={{ display: 'none' }}
+              onChange={e => handleFile(e.target.files[0])}
+            />
             {file ? (
               <>
                 <div className="dz-icon">✅</div>
@@ -147,7 +179,7 @@ export default function UploadPanel() {
               <>
                 <div className="dz-icon">📁</div>
                 <div className="dz-text">Drop your file here or <span className="dz-link">browse</span></div>
-                <div className="dz-formats">CSV · XLSX · XLS · JSON</div>
+                <div className="dz-formats">{activeMode === 'election' ? 'CSV · XLSX · XLS · JSON' : 'JSON Only'}</div>
               </>
             )}
           </div>

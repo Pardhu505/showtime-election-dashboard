@@ -375,3 +375,16 @@
 .hp-login-success {
   padding: 20px 0;
 }
+
+.hp-modal-large {
+  max-width: 1000px !important;
+  width: 95% !important;
+  min-height: auto !important;
+}
+
+.hp-data-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: var(--radius-sm);
+  width: 100%;
+}

@@ -20,6 +20,8 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
   const [psYear, setPsYear] = useState('');
   const [psState, setPsState] = useState('');
   const [psType, setPsType] = useState('Lok Sabha');
+  const [psData, setPsData] = useState(null);
+  const [psLoading, setPsLoading] = useState(false);
 
   // Login Modal state
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -70,14 +72,27 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
   const handlePsGetResult = () => {
     if (psYear && psState && psType) {
       setShowLoginModal(true);
+      setPsData(null);
     }
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (loginEmail === 'contact@showtimeconsulting.in' && loginPassword === 'Welcome@123') {
       setIsLoggedIn(true);
       setLoginError('');
+
+      // Fetch booth data upon successful login
+      setPsLoading(true);
+      try {
+        const data = await api.getBoothData(psYear, psType, psState);
+        setPsData(data);
+      } catch (err) {
+        console.error('Failed to fetch booth data:', err);
+        setPsData([]); // Empty array to show "no data" message
+      } finally {
+        setPsLoading(false);
+      }
     } else {
       setLoginError('Invalid email or password');
     }
@@ -390,12 +405,48 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
       {/* Login Modal */}
       {showLoginModal && (
         <div className="hp-login-modal-overlay">
-          <div className="hp-login-modal-content" style={{ backgroundImage: `url('https://media.gettyimages.com/id/1488650824/video/…20&c=GR6SbIyVsC7E5VMVX48QJcudQ1-jtoP3m5R9htBm45U=')` }}>
-            <div className="hp-login-auth-box">
+      <div className={`hp-login-modal-content ${isLoggedIn ? 'hp-modal-large' : ''}`} style={{ backgroundImage: !isLoggedIn ? `url('https://media.gettyimages.com/id/1488650824/video/…20&c=GR6SbIyVsC7E5VMVX48QJcudQ1-jtoP3m5R9htBm45U=')` : 'none', backgroundColor: 'white' }}>
+        <div className={isLoggedIn ? 'hp-data-box' : 'hp-login-auth-box'}>
               {isLoggedIn ? (
                 <div className="hp-login-success">
-                  <h3 style={{ color: 'var(--teal)', marginBottom: '1.5rem' }}>Data available soon</h3>
-                  <button className="btn-go" onClick={() => { setShowLoginModal(false); setIsLoggedIn(false); setLoginEmail(''); setLoginPassword(''); }}>Close</button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h3 style={{ color: 'var(--teal)', margin: 0 }}>
+                  Booth Level Results: {psState} ({psYear} {psType})
+                </h3>
+                <button className="btn-go" style={{ minWidth: '80px' }} onClick={() => { setShowLoginModal(false); setIsLoggedIn(false); setLoginEmail(''); setLoginPassword(''); setPsData(null); }}>Close</button>
+              </div>
+
+              {psLoading ? (
+                <div style={{ padding: '40px', textAlign: 'center' }}>
+                  <div className="spinner" style={{ margin: '0 auto 10px' }} />
+                  Loading booth data...
+                </div>
+              ) : psData && psData.length > 0 ? (
+                <div className="table-wrap" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+                  <table className="table-compact">
+                    <thead>
+                      <tr>
+                        {Object.keys(psData[0]).filter(k => k !== '_id' && k !== '__v' && k !== 'createdAt' && k !== 'updatedAt').map(key => (
+                          <th key={key}>{key}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {psData.map((row, idx) => (
+                        <tr key={idx}>
+                          {Object.keys(psData[0]).filter(k => k !== '_id' && k !== '__v' && k !== 'createdAt' && k !== 'updatedAt').map(key => (
+                            <td key={key}>{row[key]}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  No booth-level data found for this selection.
+                </div>
+              )}
                 </div>
               ) : (
                 <form onSubmit={handleLogin} className="hp-login-form">

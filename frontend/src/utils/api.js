@@ -85,4 +85,9 @@ export const api = {
   getCasteDistricts: (state) => get(`/caste/districts?state=${encodeURIComponent(state)}`),
   getCasteData:      (state, district) => get(`/caste/data?state=${encodeURIComponent(state)}&district=${encodeURIComponent(district)}`),
   uploadCasteData:   (formData) => post('/upload/caste', formData),
+
+  // ---- Booth endpoints ----
+  getBoothData: (year, type, state) =>
+    get(`/booth?year=${year}&type=${encodeURIComponent(type)}&state=${encodeURIComponent(state)}`),
+  uploadBoothData: (formData) => post('/upload/booth', formData),
 };
