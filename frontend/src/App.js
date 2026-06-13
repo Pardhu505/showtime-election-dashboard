@@ -188,7 +188,12 @@ export default function App() {
           </>
         )}
 
-        {activeTab === 'upload' && <UploadPanel />}
+        {activeTab === 'upload' && (
+          <UploadPanel
+            years={years}
+            statesBy={statesBy}
+          />
+        )}
       </main>
 
       <footer className="app-footer">

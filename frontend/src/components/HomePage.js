@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { api } from '../utils/api';
 import CasteDataPanel from './CasteDataPanel';
 import AllianceMapPanel from './AllianceMapPanel';
 import './HomePage.css';
