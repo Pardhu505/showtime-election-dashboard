@@ -12,7 +12,7 @@ const BoothSchema = new Schema({}, {
  * within the booth_db.
  */
 module.exports = function getBoothModel(db, collectionName) {
-  return db.model(collectionName, BoothSchema, collectionName);
+  return db.models[collectionName] || db.model(collectionName, BoothSchema, collectionName);
 };
 
 module.exports.BoothSchema = BoothSchema;

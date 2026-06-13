@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import './UploadPanel.css';
 
 const ELECTION_TYPES = ['Lok Sabha', 'Assembly'];
@@ -8,10 +8,15 @@ Varanasi,PC,,Narendra Modi,BJP,BJP,#FF6B00,612000,54.2,Yes,M,73,0,25.32,82.97
 Varanasi,PC,,Ajay Rai,INC,INC,#00A651,467000,41.3,No,M,58,0,25.32,82.97
 Varanasi,PC,,Sanjay Chaurasiya,SP,SP,#E53935,231000,4.5,No,M,52,0,25.32,82.97`;
 
-export default function UploadPanel() {
+export default function UploadPanel({ years = [], statesBy = {} }) {
   const [activeMode, setActiveMode] = useState('election'); // 'election' | 'booth'
   const [file, setFile] = useState(null);
   const [form, setForm] = useState({ year: '', type: '', state: '', phase: '1' });
+
+  const availableStates = useMemo(() => {
+    if (!form.year || !form.type) return [];
+    return statesBy[`${form.year}|${form.type}`] || [];
+  }, [form.year, form.type, statesBy]);
   const [status, setStatus] = useState(null); // null | 'uploading' | 'success' | 'error'
   const [message, setMessage] = useState('');
   const [drag, setDrag] = useState(false);
@@ -114,30 +119,28 @@ export default function UploadPanel() {
           <div className="upload-form-grid">
             <div className="filter-group">
               <label className="filter-label">Election Year *</label>
-              <input
-                className="upload-input"
-                type="number"
-                placeholder="e.g. 2024"
-                value={form.year}
-                onChange={e => setForm(f => ({ ...f, year: e.target.value }))}
-                min="1951" max="2029"
-              />
+              <select value={form.year} onChange={e => setForm(f => ({ ...f, year: e.target.value, state: '' }))}>
+                <option value="">— Select Year —</option>
+                {years.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
             </div>
             <div className="filter-group">
               <label className="filter-label">Election Type *</label>
-              <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
+              <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value, state: '' }))}>
                 <option value="">— Select —</option>
                 {ELECTION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div className="filter-group">
               <label className="filter-label">State / UT *</label>
-              <input
-                className="upload-input"
-                placeholder="e.g. Uttar Pradesh"
+              <select
                 value={form.state}
                 onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
-              />
+                disabled={!form.year || !form.type}
+              >
+                <option value="">— Select State —</option>
+                {availableStates.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
             </div>
             {activeMode === 'election' && (
               <div className="filter-group">
@@ -202,30 +205,64 @@ export default function UploadPanel() {
 
         {/* Instructions */}
         <div className="upload-instructions">
-          <div className="card">
-            <div className="section-title" style={{ marginBottom: 16 }}>📋 Required CSV Columns</div>
-            <div className="col-list">
-              {[
-                ['Constituency Name', 'required', 'Name of the constituency'],
-                ['Constituency Type', 'required', 'PC (Parliament) or AC (Assembly)'],
-                ['Parliament Constituency', 'optional', 'Parent PC name for AC seats'],
-                ['Candidate Name', 'required', 'Full name of the candidate'],
-                ['Party', 'required', 'Party name (e.g. BJP, INC)'],
-                ['Party Abbr', 'optional', 'Short form (e.g. BJP)'],
-                ['Party Color', 'optional', 'Hex color code (e.g. #FF6B00)'],
-                ['Votes', 'required', 'Total votes received'],
-                ['Vote Share', 'optional', 'Percentage (e.g. 54.2)'],
-                ['Winner', 'optional', 'Yes/No — if omitted, highest votes wins'],
-                ['Latitude', 'optional', 'For map positioning'],
-                ['Longitude', 'optional', 'For map positioning'],
-              ].map(([col, req, desc]) => (
-                <div key={col} className="col-item">
-                  <div className="col-name">{col} <span className={`col-req ${req}`}>{req}</span></div>
-                  <div className="col-desc">{desc}</div>
-                </div>
-              ))}
+          {activeMode === 'election' ? (
+            <div className="card">
+              <div className="section-title" style={{ marginBottom: 16 }}>📋 Required CSV Columns</div>
+              <div className="col-list">
+                {[
+                  ['Constituency Name', 'required', 'Name of the constituency'],
+                  ['Constituency Type', 'required', 'PC (Parliament) or AC (Assembly)'],
+                  ['Parliament Constituency', 'optional', 'Parent PC name for AC seats'],
+                  ['Candidate Name', 'required', 'Full name of the candidate'],
+                  ['Party', 'required', 'Party name (e.g. BJP, INC)'],
+                  ['Party Abbr', 'optional', 'Short form (e.g. BJP)'],
+                  ['Party Color', 'optional', 'Hex color code (e.g. #FF6B00)'],
+                  ['Votes', 'required', 'Total votes received'],
+                  ['Vote Share', 'optional', 'Percentage (e.g. 54.2)'],
+                  ['Winner', 'optional', 'Yes/No — if omitted, highest votes wins'],
+                  ['Latitude', 'optional', 'For map positioning'],
+                  ['Longitude', 'optional', 'For map positioning'],
+                ].map(([col, req, desc]) => (
+                  <div key={col} className="col-item">
+                    <div className="col-name">{col} <span className={`col-req ${req}`}>{req}</span></div>
+                    <div className="col-desc">{desc}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="card">
+              <div className="section-title" style={{ marginBottom: 16 }}>📋 JSON Data Format</div>
+              <div className="col-desc" style={{ marginBottom: 12 }}>
+                Booth level data should be an array of objects. Each object represents a polling station (booth).
+              </div>
+              <pre style={{
+                background: '#f8fafc',
+                padding: '12px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                border: '1px solid var(--border)',
+                overflowX: 'auto',
+                color: 'var(--text-primary)'
+              }}>
+{`[
+  {
+    "Booth No": 1,
+    "Booth Name": "Govt Primary School",
+    "Constituency": "Varanasi",
+    "Candidate A": 450,
+    "Candidate B": 380,
+    "NOTA": 12,
+    "Total": 842
+  },
+  ...
+]`}
+              </pre>
+              <div className="col-desc" style={{ marginTop: 12, fontSize: '11px', fontStyle: 'italic' }}>
+                Note: The dashboard will dynamically generate table columns based on the keys in your JSON objects.
+              </div>
+            </div>
+          )}
 
           <div className="card">
             <div className="section-title" style={{ marginBottom: 12 }}>⚙️ Data Sources</div>
