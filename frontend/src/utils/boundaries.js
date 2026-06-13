@@ -24,6 +24,8 @@ const inflight = new Map();   // de-dupe parallel fetches
 let allIndiaPCPromise = null; // memoised datameet fetch
 
 // ---- name normalisation ----------------------------------------------------
+
+/** Aggressive normalization: strips SC/ST/GEN tags and punctuation. */
 const normName = (s) => {
   let name = String(s || '').toUpperCase();
   // 1. Remove numeric prefixes (e.g., "120-Ichchapuram" -> "Ichchapuram")
@@ -44,6 +46,16 @@ const normName = (s) => {
     .replace(/[\(\)]/g, ' ')
     .replace(/[\.,'`"&\-]/g, '')
     .replace(/\s+/g, '')
+    .trim();
+};
+
+/** Lighter normalization: preserves SC/ST tags to distinguish colliding names like "Prathipadu". */
+const simpleNorm = (s) => {
+  if (!s) return '';
+  return String(s).toUpperCase()
+    .replace(/^\d+[\s\-\.]*/, '')
+    .replace(/[\.,'`"&\-\s]/g, '')
+    .replace(/[\(\)]/g, '')
     .trim();
 };
 
@@ -240,37 +252,46 @@ export function matchFeatures(constituencies, features, type) {
   // Build lookups for both ID and Name
   const byID = new Map();
   const byName = new Map();
+  const bySimple = new Map();
 
   // Helper to normalize IDs (strip leading zeros)
   const normID = (id) => String(id || '').replace(/^0+/, '').trim();
 
   for (const f of features) {
     const props = f.properties || {};
-    const nameKey = normName(readName(props));
+    const nameRaw = readName(props);
+    const nameKey = normName(nameRaw);
+    const simpleKey = simpleNorm(nameRaw);
     const idKey = normID(readIDProp(props));
 
     if (nameKey && !byName.has(nameKey)) byName.set(nameKey, f);
+    if (simpleKey && !bySimple.has(simpleKey)) bySimple.set(simpleKey, f);
     if (idKey && idKey !== '0' && !byID.has(idKey)) byID.set(idKey, f);
   }
 
   return constituencies.map(c => {
-    const cKey = normName(c.constituencyName);
+    const cName = c.constituencyName;
+    const cKey = normName(cName);
+    const cSimpleKey = simpleNorm(cName);
     const cID = normID(c.constituencyNo);
 
     // 1. Try ID match first (most reliable)
     let f = (cID && cID !== '0') ? byID.get(cID) : null;
 
-    // 2. Try exact name match
+    // 2. Try exact simple name match (distinguishes GEN/SC/ST, e.g. Prathipadu)
+    if (!f) f = bySimple.get(cSimpleKey);
+
+    // 3. Try exact name match (aggressive normalization)
     if (!f) f = byName.get(cKey);
 
-    // 3. Try alias / prefix match
+    // 4. Try alias / prefix match
     if (!f) {
       for (const [fName, feat] of byName) {
         if (nameMatches(cKey, fName)) { f = feat; break; }
       }
     }
 
-    // 4. Last-resort fuzzy match
+    // 5. Last-resort fuzzy match
     if (!f) {
       f = fuzzyMatchFeature(cKey, byName);
     }
