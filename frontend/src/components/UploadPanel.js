@@ -63,7 +63,15 @@ export default function UploadPanel({ years = [], statesBy = {} }) {
       }
 
       const res = await fetch(endpoint, { method: 'POST', body: fd });
-      const data = await res.json();
+
+      let data;
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        data = { error: text || res.statusText };
+      }
 
       if (res.ok) {
         setStatus('success');
@@ -71,7 +79,11 @@ export default function UploadPanel({ years = [], statesBy = {} }) {
         setFile(null);
       } else {
         setStatus('error');
-        setMessage(`❌ Upload failed: ${data.error || 'Unknown error'}`);
+        if (res.status === 413) {
+          setMessage(`❌ Payload Too Large: The file is too big for the server or hosting platform (e.g. Vercel's 4.5MB limit).`);
+        } else {
+          setMessage(`❌ Upload failed: ${data.error || 'Unknown error'}`);
+        }
       }
     } catch (err) {
       setStatus('error');
@@ -277,6 +289,18 @@ export default function UploadPanel({ years = [], statesBy = {} }) {
                   <span className="source-arrow">↗</span>
                 </a>
               ))}
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="section-title" style={{ marginBottom: 12 }}>🚀 Direct MongoDB Upload (for large files)</div>
+            <div className="col-desc" style={{ marginBottom: 10 }}>
+              If your file exceeds platform limits (like Vercel's 4.5MB), you can upload it directly to your MongoDB:
+            </div>
+            <div className="mongo-steps">
+              <div className="mongo-step">1. Connect to <b>booth_db</b></div>
+              <div className="mongo-step">2. Create collection: <code>{form.state && form.year && form.type ? `${form.state.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_${form.year}_${form.type.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}` : "state_year_type"}</code></div>
+              <div className="mongo-step">3. Import your JSON array</div>
             </div>
           </div>
 
