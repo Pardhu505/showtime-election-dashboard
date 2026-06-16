@@ -23,7 +23,10 @@ router.get('/', async (req, res) => {
     const data = await Booth.find({}).lean();
 
     if (!data || data.length === 0) {
-      return res.status(404).json({ error: 'No booth data found for this selection' });
+      return res.status(404).json({
+        error: 'No booth data found for this selection',
+        hint: `The system is looking for a collection named "${collectionName}" in the "Booth_level_data" database. Please ensure your manual import matches this name exactly.`
+      });
     }
 
     res.json(data);

@@ -3,6 +3,15 @@ import './UploadPanel.css';
 
 const ELECTION_TYPES = ['Lok Sabha', 'Assembly'];
 
+const ALL_STATES = [
+  'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar',
+  'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa',
+  'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka',
+  'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
+  'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+  'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+];
+
 const CSV_TEMPLATE = `Constituency Name,Constituency Type,Parliament Constituency,Candidate Name,Party,Party Abbr,Party Color,Votes,Vote Share,Winner,Gender,Age,Criminal Cases,Latitude,Longitude
 Varanasi,PC,,Narendra Modi,BJP,BJP,#FF6B00,612000,54.2,Yes,M,73,0,25.32,82.97
 Varanasi,PC,,Ajay Rai,INC,INC,#00A651,467000,41.3,No,M,58,0,25.32,82.97
@@ -14,8 +23,11 @@ export default function UploadPanel({ years = [], statesBy = {} }) {
   const [form, setForm] = useState({ year: '', type: '', state: '', phase: '1' });
 
   const availableStates = useMemo(() => {
-    if (!form.year || !form.type) return [];
-    return statesBy[`${form.year}|${form.type}`] || [];
+    const fromBackend = (form.year && form.type) ? (statesBy[`${form.year}|${form.type}`] || []) : [];
+    // For Booth data, always show all states. For Election results, show all as well to allow new uploads.
+    // We merge and de-dupe just in case.
+    const merged = Array.from(new Set([...fromBackend, ...ALL_STATES])).sort();
+    return merged;
   }, [form.year, form.type, statesBy]);
   const [status, setStatus] = useState(null); // null | 'uploading' | 'success' | 'error'
   const [message, setMessage] = useState('');
@@ -298,7 +310,7 @@ export default function UploadPanel({ years = [], statesBy = {} }) {
               If your file exceeds platform limits (like Vercel's 4.5MB), you can upload it directly to your MongoDB:
             </div>
             <div className="mongo-steps">
-              <div className="mongo-step">1. Connect to <b>booth_db</b></div>
+              <div className="mongo-step">1. Connect to <b>Booth_level_data</b></div>
               <div className="mongo-step">2. Create collection: <code>{form.state && form.year && form.type ? `${form.state.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_${form.year}_${form.type.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}` : "state_year_type"}</code></div>
               <div className="mongo-step">3. Import your JSON array</div>
             </div>

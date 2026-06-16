@@ -39,7 +39,7 @@ const DB_NAMES = {
   loksabha: process.env.DB_LOKSABHA || 'loksabha_db',
   assembly: process.env.DB_ASSEMBLY || 'assembly_db',
   caste:    process.env.DB_CASTE    || 'caste_db',
-  booth:    process.env.DB_BOOTH    || 'booth_db',
+  booth:    process.env.DB_BOOTH    || 'Booth_level_data',
 };
 
 // Rate limiting
