@@ -424,7 +424,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
       {/* Login Modal */}
       {showLoginModal && (
         <div className="hp-login-modal-overlay">
-      <div className={`hp-login-modal-content ${isLoggedIn ? 'hp-modal-large' : ''}`} style={{ backgroundImage: !isLoggedIn ? `url('https://media.gettyimages.com/id/1488650824/video/…20&c=GR6SbIyVsC7E5VMVX48QJcudQ1-jtoP3m5R9htBm45U=')` : 'none', backgroundColor: 'white' }}>
+      <div className={`hp-login-modal-content ${isLoggedIn ? 'hp-modal-large' : ''}`} style={{ backgroundImage: !isLoggedIn ? 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' : 'none', backgroundColor: 'white' }}>
         <div className={isLoggedIn ? 'hp-data-box' : 'hp-login-auth-box'}>
               {isLoggedIn ? (
                 <div className="hp-login-success">

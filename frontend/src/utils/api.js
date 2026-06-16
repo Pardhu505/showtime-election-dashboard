@@ -4,11 +4,14 @@ const get = async (path) => {
   const res = await fetch(`${BASE}${path}`);
   if (!res.ok) {
     let msg = `API error: ${res.status}`;
+    const text = await res.text();
     try {
-      const body = await res.json();
+      const body = JSON.parse(text);
       if (body.error) msg = body.error;
       if (body.hint) msg += ` (${body.hint})`;
-    } catch (_) {}
+    } catch (_) {
+      if (text && text.length < 200) msg += `: ${text}`;
+    }
     throw new Error(msg);
   }
   return res.json();
@@ -18,10 +21,13 @@ const post = async (path, formData) => {
   const res = await fetch(`${BASE}${path}`, { method: 'POST', body: formData });
   if (!res.ok) {
     let msg = `API error: ${res.status}`;
+    const text = await res.text();
     try {
-      const body = await res.json();
+      const body = JSON.parse(text);
       if (body.error) msg = body.error;
-    } catch (_) {}
+    } catch (_) {
+      if (text && text.length < 200) msg += `: ${text}`;
+    }
     throw new Error(msg);
   }
   return res.json();

@@ -8,16 +8,22 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const { year, type, state } = req.query;
+    console.log(`[Booth] Request received: year=${year}, type=${type}, state=${state}`);
+
     if (!year || !type || !state) {
       return res.status(400).json({ error: 'year, type, state required' });
     }
 
-    if (mongoose.connection.readyState !== 1 || !req.app.locals.dbs) {
+    if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({ error: 'MongoDB not connected' });
+    }
+    if (!req.app.locals.dbs || !req.app.locals.dbs.booth) {
+      return res.status(503).json({ error: 'Booth database handle not initialised' });
     }
 
     const norm = (s) => s.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
     const collectionName = `${norm(state)}_${norm(year)}_${norm(type)}`;
+    console.log(`[Booth] Searching collection: ${collectionName} in Booth_level_data db`);
 
     const Booth = getBoothModel(req.app.locals.dbs.booth, collectionName);
     const data = await Booth.find({}).lean();
