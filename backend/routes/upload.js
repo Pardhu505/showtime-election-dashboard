@@ -11,7 +11,7 @@ const getBoothModel = require('../models/Booth');
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 },
+  limits: { fileSize: 100 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = ['.csv', '.xlsx', '.xls', '.json'];
     const ext = '.' + file.originalname.split('.').pop().toLowerCase();
