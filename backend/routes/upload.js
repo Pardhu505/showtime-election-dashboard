@@ -8,10 +8,23 @@ const getElectionModel = require('../models/Election');
 const getCasteModel = require('../models/Caste');
 const getBoothModel = require('../models/Booth');
 
-const storage = multer.memoryStorage();
+const fs = require('fs');
+const path = require('path');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
 const upload = multer({
   storage,
-  limits: { fileSize: 100 * 1024 * 1024 },
+  limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = ['.csv', '.xlsx', '.xls', '.json'];
     const ext = '.' + file.originalname.split('.').pop().toLowerCase();
@@ -32,13 +45,16 @@ router.post('/election', upload.single('file'), async (req, res) => {
     const ext = req.file.originalname.split('.').pop().toLowerCase();
 
     if (ext === 'csv') {
-      records = parse(req.file.buffer.toString(), { columns: true, skip_empty_lines: true, trim: true });
+      const content = req.file.buffer ? req.file.buffer.toString() : fs.readFileSync(req.file.path, 'utf8');
+      records = parse(content, { columns: true, skip_empty_lines: true, trim: true });
     } else if (ext === 'xlsx' || ext === 'xls') {
-      const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const source = req.file.buffer || req.file.path;
+      const wb = XLSX.read(source, { type: req.file.buffer ? 'buffer' : 'file' });
       const ws = wb.Sheets[wb.SheetNames[0]];
       records = XLSX.utils.sheet_to_json(ws, { defval: '' });
     } else if (ext === 'json') {
-      records = JSON.parse(req.file.buffer.toString());
+      const content = req.file.buffer ? req.file.buffer.toString() : fs.readFileSync(req.file.path, 'utf8');
+      records = JSON.parse(content);
     }
 
     // Parse records into constituencies
@@ -147,6 +163,10 @@ router.post('/election', upload.single('file'), async (req, res) => {
     res.json({ success: true, message: `Uploaded ${constituencies.length} constituencies`, electionId: el._id });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
   }
 });
 
@@ -171,13 +191,16 @@ router.post('/caste', upload.single('file'), async (req, res) => {
     let records = [];
     const ext = req.file.originalname.split('.').pop().toLowerCase();
     if (ext === 'csv') {
-      records = parse(req.file.buffer.toString(), { columns: true, skip_empty_lines: true, trim: true });
+      const content = req.file.buffer ? req.file.buffer.toString() : fs.readFileSync(req.file.path, 'utf8');
+      records = parse(content, { columns: true, skip_empty_lines: true, trim: true });
     } else if (ext === 'xlsx' || ext === 'xls') {
-      const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
+      const source = req.file.buffer || req.file.path;
+      const wb = XLSX.read(source, { type: req.file.buffer ? 'buffer' : 'file' });
       const ws = wb.Sheets[wb.SheetNames[0]];
       records = XLSX.utils.sheet_to_json(ws, { defval: '' });
     } else if (ext === 'json') {
-      records = JSON.parse(req.file.buffer.toString());
+      const content = req.file.buffer ? req.file.buffer.toString() : fs.readFileSync(req.file.path, 'utf8');
+      records = JSON.parse(content);
     } else {
       return res.status(400).json({ error: `Unsupported extension: .${ext}` });
     }
@@ -224,6 +247,10 @@ router.post('/caste', upload.single('file'), async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
   }
 });
 
@@ -244,7 +271,8 @@ router.post('/booth', upload.single('file'), async (req, res) => {
     let records = [];
     const ext = req.file.originalname.split('.').pop().toLowerCase();
     if (ext === 'json') {
-      records = JSON.parse(req.file.buffer.toString());
+      const content = req.file.buffer ? req.file.buffer.toString() : fs.readFileSync(req.file.path, 'utf8');
+      records = JSON.parse(content);
     } else {
       return res.status(400).json({ error: 'Only JSON files supported for booth-level data' });
     }
@@ -273,6 +301,10 @@ router.post('/booth', upload.single('file'), async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
   }
 });
 
