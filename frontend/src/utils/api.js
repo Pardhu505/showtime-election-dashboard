@@ -2,13 +2,28 @@ const BASE = process.env.REACT_APP_API_URL || '/api';
 
 const get = async (path) => {
   const res = await fetch(`${BASE}${path}`);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  if (!res.ok) {
+    let msg = `API error: ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body.error) msg = body.error;
+      if (body.hint) msg += ` (${body.hint})`;
+    } catch (_) {}
+    throw new Error(msg);
+  }
   return res.json();
 };
 
 const post = async (path, formData) => {
   const res = await fetch(`${BASE}${path}`, { method: 'POST', body: formData });
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  if (!res.ok) {
+    let msg = `API error: ${res.status}`;
+    try {
+      const body = await res.json();
+      if (body.error) msg = body.error;
+    } catch (_) {}
+    throw new Error(msg);
+  }
   return res.json();
 };
 

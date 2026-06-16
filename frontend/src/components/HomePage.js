@@ -8,6 +8,15 @@ import './HomePage.css';
 const fmtPct = v => (v == null ? '—' : Number(v).toFixed(1));
 const fmt = n => n >= 10000000 ? (n / 10000000).toFixed(1) + 'Cr' : n >= 100000 ? (n / 100000).toFixed(1) + 'L' : n >= 1000 ? (n / 1000).toFixed(0) + 'K' : String(n);
 
+const ALL_STATES = [
+  'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar',
+  'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Delhi', 'Goa',
+  'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir', 'Jharkhand', 'Karnataka',
+  'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
+  'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+  'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+];
+
 export default function HomePage({ nationalSummary, recentAssembly, years, statesBy, onGo }) {
   // PC Elections dropdown state
   const [pcYear, setPcYear] = useState('');
@@ -23,6 +32,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
   const [psType, setPsType] = useState('Lok Sabha');
   const [psData, setPsData] = useState(null);
   const [psLoading, setPsLoading] = useState(false);
+  const [psError, setPsError] = useState('');
 
   // Login Modal state
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -67,13 +77,19 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
     if (acYear && acState) onGo(acYear, 'Assembly', acState);
   };
 
-  const psStates = useMemo(() => psYear ? (statesBy[`${psYear}|${psType}`] || []) : [], [psYear, psType, statesBy]);
+  const psStates = useMemo(() => {
+    const fromBackend = psYear ? (statesBy[`${psYear}|${psType}`] || []) : [];
+    // For booth data, always show all states to allow searching for manually imported data
+    const merged = Array.from(new Set([...fromBackend, ...ALL_STATES])).sort();
+    return merged;
+  }, [psYear, psType, statesBy]);
   const psYears = useMemo(() => years, [years]);
 
   const handlePsGetResult = () => {
     if (psYear && psState && psType) {
       setShowLoginModal(true);
       setPsData(null);
+      setPsError('');
     }
   };
 
@@ -85,12 +101,14 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
 
       // Fetch booth data upon successful login
       setPsLoading(true);
+      setPsError('');
       try {
         const data = await api.getBoothData(psYear, psType, psState);
         setPsData(data);
       } catch (err) {
         console.error('Failed to fetch booth data:', err);
-        setPsData([]); // Empty array to show "no data" message
+        setPsError(err.message || 'Failed to fetch booth data');
+        setPsData([]);
       } finally {
         setPsLoading(false);
       }
@@ -444,8 +462,8 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
                   </table>
                 </div>
               ) : (
-                <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  No booth-level data found for this selection.
+                <div style={{ padding: '40px', textAlign: 'center', color: psError ? 'var(--sp)' : 'var(--text-muted)' }}>
+                  {psError || 'No booth-level data found for this selection.'}
                 </div>
               )}
                 </div>
