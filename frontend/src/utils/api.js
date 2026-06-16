@@ -8,9 +8,12 @@ const get = async (path) => {
     try {
       const body = JSON.parse(text);
       if (body.error) msg = body.error;
-      if (body.hint) msg += ` (${body.hint})`;
+      if (body.hint) msg += ` (Hint: ${body.hint})`;
     } catch (_) {
       if (text && text.length < 200) msg += `: ${text}`;
+    }
+    if (res.status === 404) {
+      msg += `. Verify backend connectivity at ${BASE}/health`;
     }
     throw new Error(msg);
   }
@@ -27,6 +30,9 @@ const post = async (path, formData) => {
       if (body.error) msg = body.error;
     } catch (_) {
       if (text && text.length < 200) msg += `: ${text}`;
+    }
+    if (res.status === 404) {
+      msg += `. Verify backend connectivity at ${BASE}/health`;
     }
     throw new Error(msg);
   }
@@ -109,6 +115,6 @@ export const api = {
 
   // ---- Booth endpoints ----
   getBoothData: (year, type, state) =>
-    get(`/booth?year=${year}&type=${encodeURIComponent(type)}&state=${encodeURIComponent(state)}`),
-  uploadBoothData: (formData) => post('/upload/booth', formData),
+    get(`/elections/booth?year=${year}&type=${encodeURIComponent(type)}&state=${encodeURIComponent(state)}`),
+  uploadBoothData: (formData) => post('/elections/upload-booth', formData),
 };

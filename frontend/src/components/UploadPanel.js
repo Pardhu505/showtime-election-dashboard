@@ -67,11 +67,12 @@ export default function UploadPanel({ years = [], statesBy = {} }) {
       fd.append('type', form.type);
       fd.append('state', form.state);
 
-      let endpoint = '/api/upload/election';
+      const BASE = process.env.REACT_APP_API_URL || '/api';
+      let endpoint = `${BASE}/upload/election`;
       if (activeMode === 'election') {
         fd.append('phase', form.phase);
       } else {
-        endpoint = '/api/upload/booth';
+        endpoint = `${BASE}/elections/upload-booth`;
       }
 
       const res = await fetch(endpoint, { method: 'POST', body: fd });

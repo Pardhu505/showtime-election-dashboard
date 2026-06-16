@@ -1,9 +1,29 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
 const getElectionModel = require('../models/Election');
+const getBoothModel = require('../models/Booth');
 const { MOCK_ELECTIONS } = require('../middleware/mockData');
 
 const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 200 * 1024 * 1024 }
+});
 
 // ---------------------------------------------------------------------------
 const useMock = () => mongoose.connection.readyState !== 1;
@@ -244,6 +264,89 @@ router.get('/heatmap', async (req, res) => {
       winner: c.winner, turnout: c.turnout, margin: c.winner?.margin,
     })));
   } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// GET /api/elections/booth?year=2024&type=Lok Sabha&state=Andhra Pradesh
+router.get('/booth', async (req, res) => {
+  try {
+    const { year, type, state } = req.query;
+    console.log(`[Booth] Request received at /elections/booth: year=${year}, type=${type}, state=${state}`);
+
+    if (!year || !type || !state) {
+      return res.status(400).json({ error: 'year, type, state required' });
+    }
+
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ error: 'MongoDB not connected' });
+    }
+    if (!req.app.locals.dbs || !req.app.locals.dbs.booth) {
+      return res.status(503).json({ error: 'Booth database handle not initialised' });
+    }
+
+    const norm = (s) => s.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    const collectionName = `${norm(state)}_${norm(year)}_${norm(type)}`;
+    console.log(`[Booth] Searching collection: ${collectionName} in Booth_level_data db`);
+
+    const Booth = getBoothModel(req.app.locals.dbs.booth, collectionName);
+    const data = await Booth.find({}).lean();
+
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        error: 'No booth data found for this selection',
+        hint: `The system is looking for a collection named "${collectionName}" in the "Booth_level_data" database. Please ensure your manual import matches this name exactly.`
+      });
+    }
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/elections/upload-booth
+router.post('/upload-booth', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    if (mongoose.connection.readyState !== 1 || !req.app.locals.dbs) {
+      return res.status(503).json({ error: 'MongoDB is not connected.' });
+    }
+
+    const { year, type, state } = req.body;
+    if (!year || !type || !state) return res.status(400).json({ error: 'year, type, state required' });
+
+    let records = [];
+    const content = fs.readFileSync(req.file.path, 'utf8');
+    try {
+      records = JSON.parse(content);
+    } catch (parseErr) {
+      return res.status(400).json({ error: `Malformed JSON file: ${parseErr.message}` });
+    }
+
+    if (!Array.isArray(records)) {
+      return res.status(400).json({ error: 'JSON must be an array of objects' });
+    }
+
+    const norm = (s) => s.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    const collectionName = `${norm(state)}_${norm(year)}_${norm(type)}`;
+    console.log(`[Upload-Booth] Processing booth data for ${collectionName}.`);
+
+    const Booth = getBoothModel(req.app.locals.dbs.booth, collectionName);
+    await Booth.deleteMany({});
+    const result = await Booth.insertMany(records);
+
+    res.json({
+      success: true,
+      count: result.length,
+      collection: collectionName,
+      message: `Successfully uploaded ${result.length} booth records to ${collectionName}.`,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+  }
 });
 
 // ---------------------------------------------------------------------------
