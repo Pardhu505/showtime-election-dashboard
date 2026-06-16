@@ -272,7 +272,11 @@ router.post('/booth', upload.single('file'), async (req, res) => {
     const ext = req.file.originalname.split('.').pop().toLowerCase();
     if (ext === 'json') {
       const content = req.file.buffer ? req.file.buffer.toString() : fs.readFileSync(req.file.path, 'utf8');
-      records = JSON.parse(content);
+      try {
+        records = JSON.parse(content);
+      } catch (parseErr) {
+        return res.status(400).json({ error: `Malformed JSON file: ${parseErr.message}` });
+      }
     } else {
       return res.status(400).json({ error: 'Only JSON files supported for booth-level data' });
     }
@@ -284,7 +288,11 @@ router.post('/booth', upload.single('file'), async (req, res) => {
     // Organised collection name: State_Year_Type (normalised)
     const norm = (s) => s.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
     const collectionName = `${norm(state)}_${norm(year)}_${norm(type)}`;
+    console.log(`[Upload] Processing booth data for ${collectionName}. File size: ${req.file.size} bytes`);
 
+    if (!req.app.locals.dbs.booth) {
+      return res.status(503).json({ error: 'Booth database handle not initialised' });
+    }
     const Booth = getBoothModel(req.app.locals.dbs.booth, collectionName);
 
     // For booth level data, we usually want to clear and replace, or just insert new ones.
