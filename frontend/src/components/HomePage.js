@@ -132,220 +132,241 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
 
   return (
     <div className="homepage fade-in">
-      {/* ============ TOP ROW: PC 2024 Summary + Election Data ============ */}
-      <div className="hp-top-row">
-        {/* LEFT: PC 2024 Summary (pie + alliance table) */}
-        <section className="hp-section hp-summary-section">
-          <h2 className="iv-title">
-            <span className="iv-title-blue">PC {nationalSummary?.year || 2024}</span>
-            <span className="iv-title-gold">Summary</span>
-          </h2>
+      {/* ============ HERO SECTION: PC 2024 Snapshot ============ */}
+      <section className="hp-hero">
+        <div className="hp-hero-content">
+          <div className="hp-hero-text">
+            <h1 className="hp-hero-title">
+              <span className="blue">PC {nationalSummary?.year || 2024}</span> Summary
+            </h1>
+            <p className="hp-hero-sub">Comprehensive analysis of India's parliamentary elections</p>
+            <div className="hp-hero-quick-stats">
+              <div className="hp-h-stat">
+                <span className="hp-h-val">{nationalSummary?.totalSeats || 543}</span>
+                <span className="hp-h-lab">Total Seats</span>
+              </div>
+              <div className="hp-h-stat">
+                <span className="hp-h-val">{nationalSummary?.turnout ?? 65.8}%</span>
+                <span className="hp-h-lab">Voter Turnout</span>
+              </div>
+            </div>
+          </div>
 
-          <div className="hp-summary-body">
-            {/* Pie chart */}
-            <div className="hp-pie-wrap">
-              <ResponsiveContainer width="100%" height={260}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%" cy="50%"
-                    outerRadius={90}
-                    innerRadius={0}
-                    paddingAngle={1}
-                    label={({ value }) => `${value}%`}
-                    labelLine={{ stroke: '#999', strokeWidth: 1 }}
-                  >
-                    {pieData.map((p, i) => <Cell key={i} fill={p.color} stroke="#fff" strokeWidth={1.5} />)}
-                  </Pie>
-                  <Tooltip content={<PieTip />} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="hp-pie-legend">
+          <div className="hp-hero-visual">
+            <div className="hp-pie-card">
+              <div className="hp-pie-container">
+                <ResponsiveContainer width="100%" height={240}>
+                  <PieChart>
+                    <Pie
+                      data={pieData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%" cy="50%"
+                      outerRadius={85}
+                      innerRadius={60}
+                      paddingAngle={4}
+                    >
+                      {pieData.map((p, i) => <Cell key={i} fill={p.color} />)}
+                    </Pie>
+                    <Tooltip content={<PieTip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="hp-pie-center">
+                  <span className="hp-center-num">543</span>
+                  <span className="hp-center-lab">Seats</span>
+                </div>
+              </div>
+              <div className="hp-pie-legend-grid">
                 {pieData.map(p => (
-                  <span key={p.name} className="hp-legend-pill">
+                  <div key={p.name} className="hp-legend-item">
                     <span className="hp-legend-dot" style={{ background: p.color }} />
-                    {p.name}
-                  </span>
+                    <span className="hp-legend-name">{p.name}</span>
+                    <span className="hp-legend-val">{p.value}%</span>
+                  </div>
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Detailed results expandable link */}
-            <button
-              className="hp-detailed-link"
-              onClick={() => setShowDetailedResults(s => !s)}
-            >
-              PC {nationalSummary?.year || 2024} Detailed Results {showDetailedResults ? '▲' : '▼'}
-            </button>
+      {/* ============ MAIN GRID ============ */}
+      <div className="hp-main-grid">
+        {/* LEFT COLUMN */}
+        <div className="hp-col hp-col-left">
+          {/* Alliance Tables */}
+          <section className="hp-card-section">
+            <div className="hp-card-header">
+              <h3 className="hp-card-title">National Alliance Standings</h3>
+              <button
+                className="hp-toggle-btn"
+                onClick={() => setShowDetailedResults(s => !s)}
+              >
+                {showDetailedResults ? 'Show Alliances' : 'Show Partywise'}
+              </button>
+            </div>
 
-            {showDetailedResults && (
-              <div className="hp-detailed-table table-wrap fade-in">
-                <table className="table-compact">
-                  <thead>
-                    <tr>
-                      <th>Party</th>
-                      <th style={{ textAlign: 'right' }}>Seats</th>
-                      <th style={{ textAlign: 'right' }}>Vote %</th>
-                      <th style={{ textAlign: 'right' }}>Contested</th>
-                      <th style={{ textAlign: 'right' }}>Total Votes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {fullParties.map(p => (
-                      <tr key={p.name}>
-                        <td>
-                          <span className="party-dot" style={{ background: p.color, marginRight: 6 }} />
-                          {p.name}
-                        </td>
-                        <td style={{ textAlign: 'right', fontWeight: 600 }}>{p.seats ?? '—'}</td>
-                        <td style={{ textAlign: 'right' }}>{p.value}%</td>
-                        <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>{p.contested ?? '—'}</td>
-                        <td style={{ textAlign: 'right' }}>{p.totalVotes ? fmt(p.totalVotes) : '—'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+            <div className="hp-card-body">
+              {!showDetailedResults ? (
+                <div className="hp-alliances-list">
+                  <div className="hp-alliance-group">
+                    <div className="hp-group-label">Lok Sabha — Majority: 272</div>
+                    <div className="table-wrap">
+                      <table className="hp-modern-table">
+                        <thead>
+                          <tr>
+                            <th>Alliance</th>
+                            <th className="txt-rt">Seats</th>
+                            <th className="txt-rt">Vote %</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(nationalSummary?.alliances || []).map(a => (
+                            <tr key={a.name}>
+                              <td><b style={{ color: a.color }}>{a.name}</b></td>
+                              <td className="txt-rt font-bold">{a.seats}</td>
+                              <td className="txt-rt">{fmtPct(a.voteShare)}%</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
-            {/* Alliance Tables */}
-            <div className="hp-alliances-container">
-              {/* Lok Sabha */}
-              <div className="hp-alliance-table table-wrap">
-                <h3 className="hp-table-title">Lok Sabha — 543 seats (majority mark: 272)</h3>
-                <table className="table-compact">
-                  <thead>
-                    <tr>
-                      <th>Alliance</th>
-                      <th style={{ textAlign: 'right' }}>Seats</th>
-                      <th style={{ textAlign: 'right' }}>Votes %</th>
-                      <th style={{ textAlign: 'right' }}>Contested Voteshare</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(nationalSummary?.alliances || []).map(a => (
-                      <tr key={a.name}>
-                        <td style={{ fontWeight: 600, color: a.color }}>{a.name}</td>
-                        <td style={{ textAlign: 'right', fontWeight: 700 }}>{a.seats}</td>
-                        <td style={{ textAlign: 'right' }}>{fmtPct(a.voteShare)}</td>
-                        <td style={{ textAlign: 'right' }}>{fmtPct(a.contestedVoteShare)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Rajya Sabha */}
-              {nationalSummary?.rajyaSabha && (
-                <div className="hp-alliance-table table-wrap" style={{ marginTop: '1.5rem' }}>
-                  <h3 className="hp-table-title">Rajya Sabha — 245 seats</h3>
-                  <table className="table-compact">
-                    <thead>
-                      <tr>
-                        <th>Alliance</th>
-                        <th style={{ textAlign: 'right' }}>Seats</th>
-                        <th style={{ textAlign: 'right' }}>Notes</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {nationalSummary.rajyaSabha.map(a => (
-                        <tr key={a.name}>
-                          <td style={{ fontWeight: 600, color: a.color }}>{a.name}</td>
-                          <td style={{ textAlign: 'right', fontWeight: 700 }}>~{a.seats}</td>
-                          <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{a.notes}</td>
+                  {nationalSummary?.rajyaSabha && (
+                    <div className="hp-alliance-group" style={{ marginTop: '20px' }}>
+                      <div className="hp-group-label">Rajya Sabha — 245 seats</div>
+                      <div className="table-wrap">
+                        <table className="hp-modern-table">
+                          <thead>
+                            <tr>
+                              <th>Alliance</th>
+                              <th className="txt-rt">Seats</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {nationalSummary.rajyaSabha.map(a => (
+                              <tr key={a.name}>
+                                <td><b style={{ color: a.color }}>{a.name}</b></td>
+                                <td className="txt-rt font-bold">{a.seats}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="hp-partywise-list fade-in">
+                  <div className="table-wrap">
+                    <table className="hp-modern-table">
+                      <thead>
+                        <tr>
+                          <th>Party</th>
+                          <th className="txt-rt">Seats</th>
+                          <th className="txt-rt">Vote %</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {fullParties.map(p => (
+                          <tr key={p.name}>
+                            <td>
+                              <div className="hp-party-cell">
+                                <span className="party-dot" style={{ background: p.color }} />
+                                {p.name}
+                              </div>
+                            </td>
+                            <td className="txt-rt font-bold">{p.seats ?? '—'}</td>
+                            <td className="txt-rt">{p.value}%</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
-
-              <button className="hp-alliance-link">Alliances Partywise Details ›</button>
+              <button className="hp-link-btn">View Full Alliances Partywise Details ›</button>
             </div>
+          </section>
+        </div>
 
-          </div>
-        </section>
+        {/* RIGHT COLUMN */}
+        <div className="hp-col hp-col-right">
+          {/* ELECTION NAVIGATOR */}
+          <section className="hp-card-section hp-nav-card">
+            <div className="hp-card-header">
+              <h3 className="hp-card-title">Election Navigator</h3>
+            </div>
+            <div className="hp-card-body">
+              <div className="hp-nav-tabs">
+                <div className="hp-nav-tab active">Results</div>
+                <div className="hp-nav-tab">Booth Data</div>
+              </div>
 
-        {/* RIGHT: Election Data (PC / AC selectors + search) */}
-        <section className="hp-section hp-election-data">
-          <h2 className="iv-title">
-            <span className="iv-title-blue">Election</span>
-            <span className="iv-title-gold">Data</span>
-          </h2>
+              <div className="hp-nav-content">
+                <div className="hp-nav-row">
+                  <div className="hp-nav-col">
+                    <span className="hp-nav-label">PC Elections (Lok Sabha)</span>
+                    <div className="hp-nav-inputs">
+                      <select value={pcYear} onChange={e => { setPcYear(e.target.value); setPcState(''); }}>
+                        <option value="">Year</option>
+                        {pcYears.map(y => <option key={y} value={y}>{y}</option>)}
+                      </select>
+                      <select value={pcState} onChange={e => setPcState(e.target.value)} disabled={!pcYear}>
+                        <option value="">Select State</option>
+                        {pcStates.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <button className="hp-go-btn" onClick={handlePcGo} disabled={!pcYear || !pcState}>GO</button>
+                    </div>
+                  </div>
+                </div>
 
-          <div className="hp-ed-body">
-            {/* PC Elections row */}
-            <div className="hp-ed-group">
-              <label className="hp-ed-label">PC Elections (Lok Sabha)</label>
-              <div className="hp-ed-row">
-                <select value={pcYear} onChange={e => { setPcYear(e.target.value); setPcState(''); }}>
-                  <option value="">Year</option>
-                  {pcYears.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <span className="hp-required">*</span>
-                <select value={pcState} onChange={e => setPcState(e.target.value)} disabled={!pcYear}>
-                  <option value="">States</option>
-                  {pcStates.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <button
-                  className="btn-go"
-                  onClick={handlePcGo}
-                  disabled={!pcYear || !pcState}
-                  title="View results"
-                >GO</button>
+                <div className="hp-nav-divider" />
+
+                <div className="hp-nav-row">
+                  <div className="hp-nav-col">
+                    <span className="hp-nav-label">AC Elections (Vidhan Sabha)</span>
+                    <div className="hp-nav-inputs">
+                      <select value={acYear} onChange={e => { setAcYear(e.target.value); setAcState(''); }}>
+                        <option value="">Year</option>
+                        {acYears.map(y => <option key={y} value={y}>{y}</option>)}
+                      </select>
+                      <select value={acState} onChange={e => setAcState(e.target.value)} disabled={!acYear}>
+                        <option value="">Select State</option>
+                        {acStates.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <button className="hp-go-btn" onClick={handleAcGo} disabled={!acYear || !acState}>GO</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="hp-nav-divider" />
+
+                <div className="hp-nav-row">
+                  <div className="hp-nav-col">
+                    <span className="hp-nav-label">Polling Station Details</span>
+                    <div className="hp-nav-inputs hp-grid-inputs">
+                      <select value={psYear} onChange={e => { setPsYear(e.target.value); setPsState(''); }}>
+                        <option value="">Year</option>
+                        {psYears.map(y => <option key={y} value={y}>{y}</option>)}
+                      </select>
+                      <select value={psType} onChange={e => { setPsType(e.target.value); setPsState(''); }}>
+                        <option value="Lok Sabha">LS</option>
+                        <option value="Assembly">AS</option>
+                      </select>
+                      <select value={psState} onChange={e => setPsState(e.target.value)} disabled={!psYear}>
+                        <option value="">State</option>
+                        {psStates.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <button className="hp-search-btn" onClick={handlePsGetResult} disabled={!psYear || !psState}>Search</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* AC Elections row */}
-            <div className="hp-ed-group">
-              <label className="hp-ed-label">AC Elections (Vidhan Sabha)</label>
-              <div className="hp-ed-row">
-                <select value={acYear} onChange={e => { setAcYear(e.target.value); setAcState(''); }}>
-                  <option value="">Year</option>
-                  {acYears.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <span className="hp-required">*</span>
-                <select value={acState} onChange={e => setAcState(e.target.value)} disabled={!acYear}>
-                  <option value="">States</option>
-                  {acStates.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <button
-                  className="btn-go"
-                  onClick={handleAcGo}
-                  disabled={!acYear || !acState}
-                  title="View results"
-                >GO</button>
-              </div>
-            </div>
-
-            {/* Polling Station group */}
-            <div className="hp-ed-group" style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
-              <label className="hp-ed-label">Polling Station Wise Detail Results</label>
-              <div className="hp-ed-row">
-                <select value={psYear} onChange={e => { setPsYear(e.target.value); setPsState(''); }}>
-                  <option value="">Year</option>
-                  {psYears.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <select value={psType} onChange={e => { setPsType(e.target.value); setPsState(''); }}>
-                  <option value="Lok Sabha">Lok Sabha</option>
-                  <option value="Assembly">Assembly</option>
-                </select>
-                <select value={psState} onChange={e => setPsState(e.target.value)} disabled={!psYear}>
-                  <option value="">States</option>
-                  {psStates.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <button
-                  className="btn-go"
-                  style={{ minWidth: '100px' }}
-                  onClick={handlePsGetResult}
-                  disabled={!psYear || !psState}
-                >Get Result</button>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
 
       {/* ============ ALLIANCE MAP (India) ============ */}
