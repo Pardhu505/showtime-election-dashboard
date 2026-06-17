@@ -32,7 +32,7 @@
   margin-bottom: 12px;
   letter-spacing: -1px;
 }
-.hp-hero-title .blue { color: #0047AB; }
+.hp-hero-title .blue { color: var(--blue); }
 
 .hp-hero-sub {
   font-size: 18px;
@@ -152,21 +152,23 @@
   border-collapse: collapse;
 }
 .hp-modern-table th {
-  text-align: left;
+  background: var(--blue);
+  text-align: center;
   font-size: 11px;
   text-transform: uppercase;
-  color: #64748b;
+  color: #ffffff;
   font-weight: 600;
   padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .hp-modern-table td {
   padding: 12px;
   font-size: 13px;
   border-bottom: 1px solid #f8fafc;
+  text-align: center;
 }
 .hp-modern-table tr:hover td { background: #fdfdfd; }
-.txt-rt { text-align: right; }
+.txt-cntr { text-align: center; }
 .font-bold { font-weight: 700; }
 
 .hp-party-cell { display: flex; align-items: center; gap: 10px; font-weight: 600; }
@@ -218,7 +220,7 @@
 
 .hp-nav-row { margin-bottom: 20px; }
 .hp-nav-col { display: flex; flex-direction: column; gap: 8px; }
-.hp-nav-label { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+.hp-nav-label { font-size: 11px; font-weight: 700; color: #000000; text-transform: uppercase; }
 
 .hp-nav-inputs { display: flex; gap: 10px; align-items: center; }
 .hp-nav-inputs select { flex: 1; height: 40px; border-radius: 8px; }
