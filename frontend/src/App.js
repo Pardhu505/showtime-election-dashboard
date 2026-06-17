@@ -1,13 +1,13 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import Header from './components/Header';
-import HomePage from './components/HomePage';
+import LandingPage from './components/LandingPage';
 import FilterPanel from './components/FilterPanel';
 import Dashboard from './components/Dashboard';
 import UploadPanel from './components/UploadPanel';
 import PardhuChat from './components/PardhuChat';
 import {
   MOCK_DB, STATES_BY as MOCK_STATES_BY, YEARS as MOCK_YEARS,
-  NATIONAL_PC_2024, RECENT_ASSEMBLY_ELECTIONS, findPreviousElection,
+  findPreviousElection,
 } from './data/mockData';
 import { api } from './utils/api';
 import './App.css';
@@ -101,7 +101,6 @@ export default function App() {
     () => (apiYears ? apiStatesByKey : MOCK_STATES_BY),
     [apiYears, apiStatesByKey]
   );
-  const recentAssembly = apiRecent || RECENT_ASSEMBLY_ELECTIONS;
 
   // ---------------------------------------------------------------------
   // 2. Fetch election data when filters change
@@ -167,13 +166,7 @@ export default function App() {
 
       <main className="main-content">
         {activeTab === 'home' && (
-          <HomePage
-            nationalSummary={NATIONAL_PC_2024}
-            recentAssembly={recentAssembly}
-            years={years}
-            statesBy={statesBy}
-            onGo={handleHomeGo}
-          />
+          <LandingPage onGo={handleHomeGo} />
         )}
 
         {activeTab === 'results' && (
