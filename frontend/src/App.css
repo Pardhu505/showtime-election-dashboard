@@ -275,7 +275,7 @@ tbody tr:last-child td { border-bottom: none; }
   line-height: 1.1;
   letter-spacing: -0.5px;
 }
-.iv-title-blue { color: var(--blue) !important; }
+.iv-title-blue { color: var(--blue); }
 .iv-title-gold { color: var(--gold); margin-left: 6px; }
 .iv-title-sm { font-size: 18px; }
 
