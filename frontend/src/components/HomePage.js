@@ -137,7 +137,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
         {/* LEFT: PC 2024 Summary (pie + alliance table) */}
         <section className="hp-section hp-summary-section">
           <h2 className="iv-title">
-            <span className="iv-title-teal">PC {nationalSummary?.year || 2024}</span>
+            <span className="iv-title-blue">PC {nationalSummary?.year || 2024}</span>
             <span className="iv-title-gold">Summary</span>
           </h2>
 
@@ -271,7 +271,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
         {/* RIGHT: Election Data (PC / AC selectors + search) */}
         <section className="hp-section hp-election-data">
           <h2 className="iv-title">
-            <span className="iv-title-teal">Election</span>
+            <span className="iv-title-blue">Election</span>
             <span className="iv-title-gold">Data</span>
           </h2>
 
@@ -357,7 +357,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
       {/* ============ RECENT ASSEMBLY ELECTIONS ============ */}
       <section className="hp-section hp-recent-section">
         <h2 className="iv-title">
-          <span className="iv-title-teal">Recent</span>
+          <span className="iv-title-blue">Recent</span>
           <span className="iv-title-gold">Assembly Elections</span>
         </h2>
 
@@ -408,11 +408,11 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
       {/* ============ AT-A-GLANCE METRICS ============ */}
       <section className="hp-section hp-stats-section">
         <h2 className="iv-title iv-title-sm">
-          <span className="iv-title-teal">National</span>
+          <span className="iv-title-blue">National</span>
           <span className="iv-title-gold">Snapshot</span>
         </h2>
         <div className="hp-stats-grid">
-          <StatTile label="Total Lok Sabha Seats" value={nationalSummary?.totalSeats || 543} accent="var(--teal)" />
+          <StatTile label="Total Lok Sabha Seats" value={nationalSummary?.totalSeats || 543} accent="var(--blue)" />
           <StatTile label="Total Rajya Sabha Seats" value={245} accent="var(--india-blue)" />
           <StatTile label="Total States / UTs" value={nationalSummary?.totalStates || 36} accent="var(--gold)" />
           <StatTile label="Total Eligible Voters" value={nationalSummary?.totalVoters ? fmt(nationalSummary.totalVoters) : '96.8Cr'} accent="var(--india-blue)" />
@@ -429,7 +429,7 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
               {isLoggedIn ? (
                 <div className="hp-login-success">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h3 style={{ color: 'var(--teal)', margin: 0 }}>
+                <h3 style={{ color: 'var(--blue)', margin: 0 }}>
                   Booth Level Results: {psState} ({psYear} {psType})
                 </h3>
                 <button className="btn-go" style={{ minWidth: '80px' }} onClick={() => { setShowLoginModal(false); setIsLoggedIn(false); setLoginEmail(''); setLoginPassword(''); setPsData(null); }}>Close</button>

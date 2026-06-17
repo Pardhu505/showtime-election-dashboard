@@ -89,7 +89,7 @@
 .turnout-cell { font-size: 12px; font-weight: 600; color: var(--text-primary); }
 
 .details-btn {
-  background: var(--teal);
+  background: var(--blue);
   color: #fff;
   border: none;
   padding: 4px 12px;
@@ -99,7 +99,7 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.details-btn:hover { background: var(--teal-dark); }
+.details-btn:hover { background: var(--blue-dark); }
 
 .pagination {
   display: flex;
@@ -120,16 +120,16 @@
   white-space: nowrap;
 }
 .range-toggle.open {
-  border-color: var(--teal);
-  color: var(--teal);
-  background: rgba(15, 138, 140, 0.06);
+  border-color: var(--blue);
+  color: var(--blue);
+  background: rgba(0, 71, 171, 0.06);
 }
 .range-toggle .caret {
   font-size: 9px;
   opacity: 0.7;
 }
 .range-pill {
-  background: var(--teal);
+  background: var(--blue);
   color: #fff;
   font-size: 10px;
   font-weight: 700;
@@ -251,7 +251,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--teal);
+  background: var(--blue);
   border: 2px solid #fff;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -260,7 +260,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--teal);
+  background: var(--blue);
   border: 2px solid #fff;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -270,7 +270,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 10px;
-  color: var(--teal);
+  color: var(--blue);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   margin-top: -2px;

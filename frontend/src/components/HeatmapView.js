@@ -264,7 +264,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
                     key={`real-${c.constituencyName}-${i}`}
                     positions={positions}
                     pathOptions={{
-                      color: '#1a202c',
+                      color: '#000000',
                       weight: 0.6,
                       opacity: 0.55,
                       fillColor: color,
@@ -273,7 +273,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
                     eventHandlers={{
                       click: () => onSelectConstituency(c),
                       mouseover: (e) => e.target.setStyle({ weight: 2.5, opacity: 1, fillOpacity: 0.92, color: '#000' }),
-                      mouseout:  (e) => e.target.setStyle({ weight: 0.6, opacity: 0.55, fillOpacity: 0.78, color: '#1a202c' }),
+                      mouseout:  (e) => e.target.setStyle({ weight: 0.6, opacity: 0.55, fillOpacity: 0.78, color: '#000000' }),
                     }}
                   >
                     <Tip c={c} />
@@ -306,7 +306,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
                     key={`voro-${c.constituencyName}`}
                     positions={poly}
                     pathOptions={{
-                      color: '#1a202c',
+                      color: '#000000',
                       weight: 0.8,
                       opacity: 0.6,
                       fillColor: getColor(c),
@@ -315,7 +315,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
                     eventHandlers={{
                       click: () => onSelectConstituency(c),
                       mouseover: (e) => e.target.setStyle({ weight: 2.5, opacity: 1, fillOpacity: 0.92, color: '#000' }),
-                      mouseout:  (e) => e.target.setStyle({ weight: 0.8, opacity: 0.6, fillOpacity: 0.78, color: '#1a202c' }),
+                      mouseout:  (e) => e.target.setStyle({ weight: 0.8, opacity: 0.6, fillOpacity: 0.78, color: '#000000' }),
                     }}
                   >
                     <Tip c={c} />
@@ -330,7 +330,7 @@ export default function HeatmapView({ electionData, onSelectConstituency }) {
                   center={[c.latitude, c.longitude]}
                   radius={getRadius(c)}
                   pathOptions={{
-                    color: '#1a202c', weight: 1, opacity: 0.5,
+                    color: '#000000', weight: 1, opacity: 0.5,
                     fillColor: getColor(c), fillOpacity: 0.75,
                   }}
                   eventHandlers={{

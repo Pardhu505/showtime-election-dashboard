@@ -16,7 +16,7 @@
 .ca-kpi-tile {
   background: #fff;
   border: 1px solid var(--border);
-  border-top: 3px solid var(--teal);
+  border-top: 3px solid var(--blue);
   border-radius: var(--radius);
   padding: 14px 16px;
   box-shadow: var(--shadow-card);

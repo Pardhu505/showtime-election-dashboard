@@ -131,7 +131,7 @@ export default function AllianceMapPanel() {
       fillColor: ALLIANCE_COLORS[winner],
       weight: 0.7,
       opacity: 0.7,
-      color: '#1a202c',
+      color: '#000000',
       fillOpacity: winner === 'NODATA' ? 0.5 : 0.78,
     };
   };
@@ -145,7 +145,7 @@ export default function AllianceMapPanel() {
         setHover({ name: sname, info });
       },
       mouseout: (e) => {
-        e.target.setStyle({ weight: 0.7, color: '#1a202c', fillOpacity: info?.winner === 'NODATA' ? 0.5 : 0.78 });
+        e.target.setStyle({ weight: 0.7, color: '#000000', fillOpacity: info?.winner === 'NODATA' ? 0.5 : 0.78 });
         setHover(null);
       },
     });
@@ -155,7 +155,7 @@ export default function AllianceMapPanel() {
     <section className="alliance-section">
       <div className="alliance-header">
         <h2 className="iv-title">
-          <span className="iv-title-teal">Alliance</span>
+          <span className="iv-title-blue">Alliance</span>
           <span className="iv-title-gold">Map · India</span>
         </h2>
         <div className="alliance-year-toggle">

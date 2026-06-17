@@ -62,8 +62,8 @@ export default function ConstituencyDetail({ constituency: c, onClose }) {
             <div style={{ height: Math.max(200, c.candidates.length * 36) }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={c.candidates} layout="vertical" margin={{ top: 0, right: 60, bottom: 0, left: 10 }}>
-                  <XAxis type="number" tick={{ fill: '#4a5568', fontSize: 10 }} tickFormatter={fmt} stroke="#cbd5e0" />
-                  <YAxis type="category" dataKey="name" tick={{ fill: '#4a5568', fontSize: 10 }} width={130} tickFormatter={v => v.length > 18 ? v.slice(0, 17)+'…' : v} stroke="#cbd5e0" />
+                  <XAxis type="number" tick={{ fill: '#000000', fontSize: 10 }} tickFormatter={fmt} stroke="#cbd5e0" />
+                  <YAxis type="category" dataKey="name" tick={{ fill: '#000000', fontSize: 10 }} width={130} tickFormatter={v => v.length > 18 ? v.slice(0, 17)+'…' : v} stroke="#cbd5e0" />
                   <Tooltip
                     formatter={(v, n, { payload: p }) => [`${fmt(v)} (${p.voteShare}%)`, 'Votes']}
                     contentStyle={{ background: '#fff', border: '1px solid #e3e8ee', borderRadius: 6, fontSize: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}

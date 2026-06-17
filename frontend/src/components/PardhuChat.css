@@ -28,7 +28,7 @@
 .pardhu-launcher b {
   font-family: var(--font-display);
   font-weight: 700;
-  color: var(--teal);
+  color: var(--blue);
 }
 .pardhu-launcher-icon {
   position: relative;
@@ -206,7 +206,7 @@
 }
 
 .pardhu-msg-user .pardhu-msg-bubble {
-  background: var(--teal, #0F8A8C);
+  background: var(--blue, #0047AB);
   color: #fff;
   border-bottom-right-radius: 4px;
 }
@@ -270,9 +270,9 @@
   transition: all 0.15s;
 }
 .pardhu-quick-pill:hover {
-  border-color: var(--teal);
-  color: var(--teal);
-  background: rgba(15, 138, 140, 0.05);
+  border-color: var(--blue);
+  color: var(--blue);
+  background: rgba(0, 71, 171, 0.05);
 }
 
 /* ---- Input row ---- */
@@ -302,7 +302,7 @@
   transition: border-color 0.15s, background 0.15s;
 }
 .pardhu-input:focus {
-  border-color: var(--teal);
+  border-color: var(--blue);
   background: #fff;
 }
 .pardhu-input:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -313,17 +313,17 @@
   height: 36px;
   border: none;
   border-radius: 50%;
-  background: var(--teal, #0F8A8C);
+  background: var(--blue, #0047AB);
   color: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s;
-  box-shadow: 0 2px 6px rgba(15, 138, 140, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 71, 171, 0.3);
 }
 .pardhu-send-btn:hover:not(:disabled) {
-  background: var(--teal-dark, #0a6e70);
+  background: var(--blue-dark, #003380);
   transform: translateY(-1px);
 }
 .pardhu-send-btn:disabled {
@@ -344,7 +344,7 @@
   border-top: 1px solid var(--border);
 }
 .pardhu-footer a {
-  color: var(--teal);
+  color: var(--blue);
   text-decoration: none;
 }
 .pardhu-footer a:hover { text-decoration: underline; }
