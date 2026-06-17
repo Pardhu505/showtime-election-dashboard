@@ -232,7 +232,7 @@ input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rg
 table { width: 100%; border-collapse: collapse; background: #fff; }
 thead { background: var(--bg-table-head); }
 thead th {
-  text-align: center;
+  text-align: left;
   padding: 10px 12px;
   font-size: 12px;
   font-weight: 600;
@@ -246,7 +246,6 @@ tbody td {
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
   color: var(--text-primary);
-  text-align: center;
 }
 tbody tr:hover td { background: var(--bg-secondary); }
 tbody tr:last-child td { border-bottom: none; }

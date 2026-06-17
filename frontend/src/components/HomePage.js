@@ -216,16 +216,16 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
                         <thead>
                           <tr>
                             <th>Alliance</th>
-                            <th className="txt-cntr">Seats</th>
-                            <th className="txt-cntr">Vote %</th>
+                            <th className="txt-rt">Seats</th>
+                            <th className="txt-rt">Vote %</th>
                           </tr>
                         </thead>
                         <tbody>
                           {(nationalSummary?.alliances || []).map(a => (
                             <tr key={a.name}>
                               <td><b style={{ color: a.color }}>{a.name}</b></td>
-                              <td className="txt-cntr font-bold">{a.seats}</td>
-                              <td className="txt-cntr">{fmtPct(a.voteShare)}%</td>
+                              <td className="txt-rt font-bold">{a.seats}</td>
+                              <td className="txt-rt">{fmtPct(a.voteShare)}%</td>
                             </tr>
                           ))}
                         </tbody>
@@ -241,14 +241,14 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
                           <thead>
                             <tr>
                               <th>Alliance</th>
-                            <th className="txt-cntr">Seats</th>
+                              <th className="txt-rt">Seats</th>
                             </tr>
                           </thead>
                           <tbody>
                             {nationalSummary.rajyaSabha.map(a => (
                               <tr key={a.name}>
                                 <td><b style={{ color: a.color }}>{a.name}</b></td>
-                                <td className="txt-cntr font-bold">{a.seats}</td>
+                                <td className="txt-rt font-bold">{a.seats}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -264,8 +264,8 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
                       <thead>
                         <tr>
                           <th>Party</th>
-                          <th className="txt-cntr">Seats</th>
-                          <th className="txt-cntr">Vote %</th>
+                          <th className="txt-rt">Seats</th>
+                          <th className="txt-rt">Vote %</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -277,8 +277,8 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
                                 {p.name}
                               </div>
                             </td>
-                            <td className="txt-cntr font-bold">{p.seats ?? '—'}</td>
-                            <td className="txt-cntr">{p.value}%</td>
+                            <td className="txt-rt font-bold">{p.seats ?? '—'}</td>
+                            <td className="txt-rt">{p.value}%</td>
                           </tr>
                         ))}
                       </tbody>
