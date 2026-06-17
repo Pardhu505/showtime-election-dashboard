@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
-  BarChart, Bar, XAxis
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  BarChart, Bar
 } from 'recharts';
 import { api } from '../utils/api';
 import CasteDataPanel from './CasteDataPanel';
@@ -184,38 +185,69 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
       <div className="hp-hero-modern">
         <div className="hp-hero-card hp-turnout-trends">
           <div className="hp-card-header">
-            <h3 className="hp-card-title">Turnout Trends</h3>
-            <span className="hp-card-badge">Live Updates</span>
+            <div>
+              <h3 className="hp-card-title">Voter Turnout Trends</h3>
+              <p className="hp-card-subtitle">National average across last 5 general elections</p>
+            </div>
+            <span className="hp-card-badge live">Live Updates</span>
           </div>
           <div className="hp-turnout-content">
-            <div className="hp-turnout-main">
-              <div className="hp-turnout-number">
-                <span className="hp-value">78.4%</span>
-                <span className="hp-label">Total Voter Turnout</span>
+            <div className="hp-turnout-stats">
+              <div className="hp-turnout-main">
+                <div className="hp-turnout-number">
+                  <span className="hp-value">78.4%</span>
+                  <span className="hp-label">Current Turnout</span>
+                </div>
+                <div className="hp-turnout-delta positive">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <polyline points="18 15 12 9 6 15"></polyline>
+                  </svg>
+                  <span>+5.2% vs 2019</span>
+                </div>
               </div>
-              <div className="hp-turnout-delta positive">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                  <polyline points="18 15 12 9 6 15"></polyline>
-                </svg>
-                <span>+5.2% vs 2022</span>
+              <div className="hp-turnout-details">
+                <div className="hp-t-detail">
+                  <span className="hp-t-val">96.8Cr</span>
+                  <span className="hp-t-lbl">Total Voters</span>
+                </div>
+                <div className="hp-t-detail">
+                  <span className="hp-t-val">12.5M</span>
+                  <span className="hp-t-lbl">First Time</span>
+                </div>
               </div>
             </div>
             <div className="hp-turnout-chart">
-              <ResponsiveContainer width="100%" height={120}>
-                <BarChart data={TURNOUT_TREND_DATA}>
+              <ResponsiveContainer width="100%" height={160}>
+                <AreaChart data={TURNOUT_TREND_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--blue)" stopOpacity={1}/>
-                      <stop offset="100%" stopColor="var(--blue-light)" stopOpacity={0.6}/>
+                    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--blue)" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="var(--blue)" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <Bar dataKey="value" fill="url(#barGradient)" radius={[4, 4, 0, 0]} />
-                  <XAxis dataKey="name" hide />
-                  <Tooltip
-                    cursor={{fill: 'transparent'}}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-dropdown)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{fill: 'var(--text-muted)', fontSize: 10}}
+                    dy={10}
                   />
-                </BarChart>
+                  <YAxis hide domain={[50, 85]} />
+                  <Tooltip
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'var(--shadow-dropdown)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="var(--blue)"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#areaGradient)"
+                    dot={{ r: 4, fill: 'var(--blue)', strokeWidth: 2, stroke: '#fff' }}
+                    activeDot={{ r: 6, strokeWidth: 0 }}
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -223,14 +255,17 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
 
         <div className="hp-hero-card hp-insights">
           <div className="hp-card-header">
-            <h3 className="hp-card-title">Key Insights</h3>
-            <button className="hp-view-all">View All</button>
+            <div>
+              <h3 className="hp-card-title">Key Insights & Highlights</h3>
+              <p className="hp-card-subtitle">Critical data points for 2024</p>
+            </div>
+            <button className="hp-view-all">View Report</button>
           </div>
-          <div className="hp-insights-list">
+          <div className="hp-insights-grid">
             {INSIGHTS.map(item => (
-              <div key={item.id} className="hp-insight-item">
-                <div className="hp-insight-icon">{item.icon}</div>
-                <div className="hp-insight-text">
+              <div key={item.id} className="hp-insight-card">
+                <div className="hp-insight-icon-box">{item.icon}</div>
+                <div className="hp-insight-info">
                   <h4>{item.title}</h4>
                   <p>{item.desc}</p>
                 </div>
@@ -376,80 +411,84 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
           </div>
         </section>
 
-        {/* RIGHT: Election Data (PC / AC selectors + search) */}
-        <section className="hp-section hp-election-data">
-          <h2 className="iv-title">
-            <span className="iv-title-blue">Election</span>
-            <span className="iv-title-gold">Data</span>
-          </h2>
+        {/* RIGHT: Election Navigator (PC / AC selectors + search) */}
+        <section className="hp-navigator-section">
+          <div className="hp-navigator-header">
+            <h2 className="iv-title">
+              <span className="iv-title-blue">Election</span>
+              <span className="iv-title-gold">Navigator</span>
+            </h2>
+            <div className="hp-navigator-tabs">
+              <button className="active">Results</button>
+              <button>Candidates</button>
+              <button>Analysis</button>
+            </div>
+          </div>
 
-          <div className="hp-ed-body">
-            {/* PC Elections row */}
-            <div className="hp-ed-group">
-              <label className="hp-ed-label">PC Elections (Lok Sabha)</label>
-              <div className="hp-ed-row">
-                <select value={pcYear} onChange={e => { setPcYear(e.target.value); setPcState(''); }}>
-                  <option value="">Year</option>
-                  {pcYears.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <span className="hp-required">*</span>
-                <select value={pcState} onChange={e => setPcState(e.target.value)} disabled={!pcYear}>
-                  <option value="">States</option>
-                  {pcStates.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <button
-                  className="btn-go"
-                  onClick={handlePcGo}
-                  disabled={!pcYear || !pcState}
-                  title="View results"
-                >GO</button>
+          <div className="hp-navigator-grid">
+            <div className="hp-nav-card pc-nav">
+              <div className="hp-nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div className="hp-nav-content">
+                <label>Lok Sabha (PC)</label>
+                <div className="hp-nav-actions">
+                  <select value={pcYear} onChange={e => { setPcYear(e.target.value); setPcState(''); }}>
+                    <option value="">Year</option>
+                    {pcYears.map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                  <select value={pcState} onChange={e => setPcState(e.target.value)} disabled={!pcYear}>
+                    <option value="">State</option>
+                    {pcStates.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <button className="hp-nav-go" onClick={handlePcGo} disabled={!pcYear || !pcState}>Explore</button>
+                </div>
               </div>
             </div>
 
-            {/* AC Elections row */}
-            <div className="hp-ed-group">
-              <label className="hp-ed-label">AC Elections (Vidhan Sabha)</label>
-              <div className="hp-ed-row">
-                <select value={acYear} onChange={e => { setAcYear(e.target.value); setAcState(''); }}>
-                  <option value="">Year</option>
-                  {acYears.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <span className="hp-required">*</span>
-                <select value={acState} onChange={e => setAcState(e.target.value)} disabled={!acYear}>
-                  <option value="">States</option>
-                  {acStates.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <button
-                  className="btn-go"
-                  onClick={handleAcGo}
-                  disabled={!acYear || !acState}
-                  title="View results"
-                >GO</button>
+            <div className="hp-nav-card ac-nav">
+              <div className="hp-nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+              </div>
+              <div className="hp-nav-content">
+                <label>Assembly (AC)</label>
+                <div className="hp-nav-actions">
+                  <select value={acYear} onChange={e => { setAcYear(e.target.value); setAcState(''); }}>
+                    <option value="">Year</option>
+                    {acYears.map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                  <select value={acState} onChange={e => setAcState(e.target.value)} disabled={!acYear}>
+                    <option value="">State</option>
+                    {acStates.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <button className="hp-nav-go" onClick={handleAcGo} disabled={!acYear || !acState}>Explore</button>
+                </div>
               </div>
             </div>
 
-            {/* Polling Station group */}
-            <div className="hp-ed-group" style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
-              <label className="hp-ed-label">Polling Station Wise Detail Results</label>
-              <div className="hp-ed-row">
-                <select value={psYear} onChange={e => { setPsYear(e.target.value); setPsState(''); }}>
-                  <option value="">Year</option>
-                  {psYears.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-                <select value={psType} onChange={e => { setPsType(e.target.value); setPsState(''); }}>
-                  <option value="Lok Sabha">Lok Sabha</option>
-                  <option value="Assembly">Assembly</option>
-                </select>
-                <select value={psState} onChange={e => setPsState(e.target.value)} disabled={!psYear}>
-                  <option value="">States</option>
-                  {psStates.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <button
-                  className="btn-go"
-                  style={{ minWidth: '100px' }}
-                  onClick={handlePsGetResult}
-                  disabled={!psYear || !psState}
-                >Get Result</button>
+            <div className="hp-nav-card ps-nav">
+              <div className="hp-nav-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </div>
+              <div className="hp-nav-content">
+                <label>Polling Station Analysis</label>
+                <div className="hp-nav-actions">
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <select value={psYear} style={{ flex: 1 }} onChange={e => { setPsYear(e.target.value); setPsState(''); }}>
+                      <option value="">Year</option>
+                      {psYears.map(y => <option key={y} value={y}>{y}</option>)}
+                    </select>
+                    <select value={psType} style={{ flex: 1.2 }} onChange={e => { setPsType(e.target.value); setPsState(''); }}>
+                      <option value="Lok Sabha">Lok Sabha</option>
+                      <option value="Assembly">Assembly</option>
+                    </select>
+                  </div>
+                  <select value={psState} onChange={e => setPsState(e.target.value)} disabled={!psYear}>
+                    <option value="">State</option>
+                    {psStates.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                  <button className="hp-nav-go secondary" onClick={handlePsGetResult} disabled={!psYear || !psState}>Search</button>
+                </div>
               </div>
             </div>
           </div>
