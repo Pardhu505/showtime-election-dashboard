@@ -82,7 +82,7 @@ export default function CasteDataPanel({ data: dataProp }) {
   return (
     <section className="caste-section">
       <h2 className="iv-title">
-        <span className="iv-title-teal">Caste</span>
+        <span className="iv-title-blue">Caste</span>
         <span className="iv-title-gold">Demographics</span>
       </h2>
       <p className="caste-sub">
@@ -167,12 +167,12 @@ export default function CasteDataPanel({ data: dataProp }) {
                   barCategoryGap={4}
                 >
                   <XAxis type="number" domain={[0, 'auto']}
-                    tick={{ fill: '#4a5568', fontSize: 11 }} stroke="#cbd5e0"
+                    tick={{ fill: '#000000', fontSize: 11 }} stroke="#cbd5e0"
                     tickFormatter={v => `${v}%`} />
                   <YAxis type="category" dataKey="caste" width={140}
-                    tick={{ fill: '#1a202c', fontSize: 11, fontWeight: 500 }} stroke="#cbd5e0" />
+                    tick={{ fill: '#000000', fontSize: 11, fontWeight: 500 }} stroke="#cbd5e0" />
                   <Tooltip
-                    cursor={{ fill: 'rgba(15,138,140,0.06)' }}
+                    cursor={{ fill: 'rgba(0, 71, 171, 0.06)' }}
                     formatter={(v) => [`${v}%`, 'Population']}
                     contentStyle={{ background: '#fff', border: '1px solid #e3e8ee', borderRadius: 6, fontSize: 12 }}
                   />

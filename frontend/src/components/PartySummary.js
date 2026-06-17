@@ -14,11 +14,11 @@ const CustomTooltip = ({ active, payload }) => {
   const d = payload[0].payload;
   return (
     <div style={{ background: '#fff', border: '1px solid #e3e8ee', borderRadius: 6, padding: '10px 14px', fontSize: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-      <div style={{ fontWeight: 700, color: d.partyColor || '#1a202c', marginBottom: 4 }}>{d.party}</div>
-      <div style={{ color: '#4a5568' }}>Seats Won: <b style={{ color: '#1a202c' }}>{d.seatsWon}</b></div>
-      <div style={{ color: '#4a5568' }}>Contested: {d.seatsContested}</div>
-      <div style={{ color: '#4a5568' }}>Votes: {fmt(d.totalVotes)}</div>
-      <div style={{ color: '#4a5568' }}>Vote Share: {d.voteShare}%</div>
+      <div style={{ fontWeight: 700, color: d.partyColor || '#000000', marginBottom: 4 }}>{d.party}</div>
+      <div style={{ color: '#000000' }}>Seats Won: <b style={{ color: '#000000' }}>{d.seatsWon}</b></div>
+      <div style={{ color: '#000000' }}>Contested: {d.seatsContested}</div>
+      <div style={{ color: '#000000' }}>Votes: {fmt(d.totalVotes)}</div>
+      <div style={{ color: '#000000' }}>Vote Share: {d.voteShare}%</div>
     </div>
   );
 };
@@ -108,8 +108,8 @@ export default function PartySummary({ electionData, previousElection }) {
             <ResponsiveContainer width="100%" height="100%">
               {view === 'bar' ? (
                 <BarChart data={top10} margin={{ top: 4, right: 8, bottom: 24, left: -10 }}>
-                  <XAxis dataKey="partyAbbr" tick={{ fill: '#4a5568', fontSize: 11 }} angle={-30} textAnchor="end" stroke="#cbd5e0" />
-                  <YAxis tick={{ fill: '#4a5568', fontSize: 11 }} stroke="#cbd5e0" />
+                  <XAxis dataKey="partyAbbr" tick={{ fill: '#000000', fontSize: 11 }} angle={-30} textAnchor="end" stroke="#cbd5e0" />
+                  <YAxis tick={{ fill: '#000000', fontSize: 11 }} stroke="#cbd5e0" />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar dataKey="seatsWon" radius={[4, 4, 0, 0]}>
                     {top10.map((p, i) => <Cell key={i} fill={p.partyColor || '#666'} />)}
@@ -121,7 +121,7 @@ export default function PartySummary({ electionData, previousElection }) {
                     {top10.map((p, i) => <Cell key={i} fill={p.partyColor || '#666'} />)}
                   </Pie>
                   <Tooltip content={<CustomTooltip />} />
-                  <Legend formatter={(v) => <span style={{ fontSize: 11, color: '#4a5568' }}>{v}</span>} />
+                  <Legend formatter={(v) => <span style={{ fontSize: 11, color: '#000000' }}>{v}</span>} />
                 </PieChart>
               )}
             </ResponsiveContainer>
@@ -139,8 +139,8 @@ export default function PartySummary({ electionData, previousElection }) {
           <div style={{ height: 280 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={top10} layout="vertical" margin={{ top: 4, right: 40, bottom: 4, left: 20 }}>
-                <XAxis type="number" tick={{ fill: '#4a5568', fontSize: 11 }} domain={[0, 'auto']} tickFormatter={v => v + '%'} stroke="#cbd5e0" />
-                <YAxis type="category" dataKey="partyAbbr" tick={{ fill: '#4a5568', fontSize: 11 }} width={52} stroke="#cbd5e0" />
+                <XAxis type="number" tick={{ fill: '#000000', fontSize: 11 }} domain={[0, 'auto']} tickFormatter={v => v + '%'} stroke="#cbd5e0" />
+                <YAxis type="category" dataKey="partyAbbr" tick={{ fill: '#000000', fontSize: 11 }} width={52} stroke="#cbd5e0" />
                 <Tooltip formatter={v => v + '%'} contentStyle={{ background: '#fff', border: '1px solid #e3e8ee', borderRadius: 6, fontSize: 12 }} />
                 <Bar dataKey="voteShare" radius={[0, 4, 4, 0]}>
                   {top10.map((p, i) => <Cell key={i} fill={p.partyColor || '#666'} />)}

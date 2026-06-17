@@ -219,7 +219,7 @@ export default function PardhuChat() {
   );
 }
 
-// Compact monogram avatar — saffron→teal gradient with "P" letterform
+// Compact monogram avatar — saffron→blue gradient with "P" letterform
 function PardhuAvatar({ small = false }) {
   const size = small ? 22 : 32;
   return (
@@ -227,7 +227,7 @@ function PardhuAvatar({ small = false }) {
       <defs>
         <linearGradient id="pardhu-grad" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#FF8B33" />
-          <stop offset="100%" stopColor="#0F8A8C" />
+          <stop offset="100%" stopColor="#0047AB" />
         </linearGradient>
       </defs>
       <circle cx="18" cy="18" r="17" fill="url(#pardhu-grad)" />

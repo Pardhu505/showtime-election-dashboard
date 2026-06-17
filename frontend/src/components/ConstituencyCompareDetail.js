@@ -22,7 +22,7 @@ export default function ConstituencyCompareDetail({ current, comparison, current
   // Turnout comparison data
   const turnoutData = [
     { name: `${previousElection.year}`, value: +comparison.previousTurnout.toFixed(1), color: '#94a3b8' },
-    { name: `${currentElection.year}`, value: +comparison.currentTurnout.toFixed(1), color: 'var(--teal)' },
+    { name: `${currentElection.year}`, value: +comparison.currentTurnout.toFixed(1), color: 'var(--blue)' },
   ];
 
   return (
@@ -87,8 +87,8 @@ export default function ConstituencyCompareDetail({ current, comparison, current
           <p className="ccd-section-sub">Side-by-side party vote share, previous vs current.</p>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={voteShareData} margin={{ top: 8, right: 12, bottom: 8, left: 0 }}>
-              <XAxis dataKey="party" tick={{ fill: '#4a5568', fontSize: 11 }} stroke="#cbd5e0" />
-              <YAxis tickFormatter={v => v + '%'} tick={{ fill: '#4a5568', fontSize: 11 }} stroke="#cbd5e0" />
+              <XAxis dataKey="party" tick={{ fill: '#000000', fontSize: 11 }} stroke="#cbd5e0" />
+              <YAxis tickFormatter={v => v + '%'} tick={{ fill: '#000000', fontSize: 11 }} stroke="#cbd5e0" />
               <Tooltip
                 formatter={v => Number(v).toFixed(2) + '%'}
                 contentStyle={{ background: '#fff', border: '1px solid #e3e8ee', borderRadius: 6, fontSize: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
@@ -147,8 +147,8 @@ export default function ConstituencyCompareDetail({ current, comparison, current
               <h4 className="ccd-dual-title">Winning Margin</h4>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={marginData} margin={{ top: 6, right: 8, bottom: 6, left: 0 }}>
-                  <XAxis dataKey="name" tick={{ fill: '#4a5568', fontSize: 11 }} stroke="#cbd5e0" />
-                  <YAxis tickFormatter={fmt} tick={{ fill: '#4a5568', fontSize: 11 }} stroke="#cbd5e0" />
+                  <XAxis dataKey="name" tick={{ fill: '#000000', fontSize: 11 }} stroke="#cbd5e0" />
+                  <YAxis tickFormatter={fmt} tick={{ fill: '#000000', fontSize: 11 }} stroke="#cbd5e0" />
                   <Tooltip
                     formatter={v => fmt(v) + ' votes'}
                     contentStyle={{ background: '#fff', border: '1px solid #e3e8ee', borderRadius: 6, fontSize: 12 }}
@@ -163,8 +163,8 @@ export default function ConstituencyCompareDetail({ current, comparison, current
               <h4 className="ccd-dual-title">Turnout %</h4>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={turnoutData} margin={{ top: 6, right: 8, bottom: 6, left: 0 }}>
-                  <XAxis dataKey="name" tick={{ fill: '#4a5568', fontSize: 11 }} stroke="#cbd5e0" />
-                  <YAxis domain={[0, 100]} tickFormatter={v => v + '%'} tick={{ fill: '#4a5568', fontSize: 11 }} stroke="#cbd5e0" />
+                  <XAxis dataKey="name" tick={{ fill: '#000000', fontSize: 11 }} stroke="#cbd5e0" />
+                  <YAxis domain={[0, 100]} tickFormatter={v => v + '%'} tick={{ fill: '#000000', fontSize: 11 }} stroke="#cbd5e0" />
                   <Tooltip
                     formatter={v => v + '%'}
                     contentStyle={{ background: '#fff', border: '1px solid #e3e8ee', borderRadius: 6, fontSize: 12 }}

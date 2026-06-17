@@ -49,16 +49,16 @@
 }
 
 .dash-tab:hover {
-  border-color: var(--teal);
-  color: var(--teal);
-  background: rgba(15, 138, 140, 0.04);
+  border-color: var(--blue);
+  color: var(--blue);
+  background: rgba(0, 71, 171, 0.04);
 }
 
 .dash-tab.active {
-  background: var(--teal);
-  border-color: var(--teal);
+  background: var(--blue);
+  border-color: var(--blue);
   color: #fff;
-  box-shadow: 0 1px 3px rgba(15, 138, 140, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 71, 171, 0.3);
 }
 
 .dash-tab-icon {

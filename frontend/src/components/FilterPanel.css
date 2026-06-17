@@ -30,7 +30,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: var(--teal);
+  color: var(--blue);
 }
 
 .filter-status-badge {
@@ -138,10 +138,10 @@
   position: relative;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-.ms-button:hover:not(:disabled) { border-color: var(--teal); }
+.ms-button:hover:not(:disabled) { border-color: var(--blue); }
 .ms-button.open {
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(15, 138, 140, 0.12);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.12);
 }
 .ms-button:disabled { cursor: not-allowed; background: var(--bg-secondary); }
 
@@ -234,7 +234,7 @@
 .ms-link {
   background: transparent;
   border: none;
-  color: var(--teal);
+  color: var(--blue);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -242,7 +242,7 @@
   text-decoration: underline;
   font-family: var(--font-body);
 }
-.ms-link:hover { color: var(--teal-dark); }
+.ms-link:hover { color: var(--blue-dark); }
 
 .ms-count {
   margin-left: auto;
@@ -268,8 +268,8 @@
   transition: background 0.1s;
 }
 .ms-option:hover { background: var(--bg-secondary); }
-.ms-option.is-checked { background: rgba(15, 138, 140, 0.05); }
-.ms-option.is-checked:hover { background: rgba(15, 138, 140, 0.1); }
+.ms-option.is-checked { background: rgba(0, 71, 171, 0.05); }
+.ms-option.is-checked:hover { background: rgba(0, 71, 171, 0.1); }
 
 /* Hide the native checkbox, draw our own */
 .ms-option input[type=checkbox] {
@@ -292,8 +292,8 @@
   transition: all 0.15s;
 }
 .ms-option.is-checked .ms-checkbox-visual {
-  background: var(--teal);
-  border-color: var(--teal);
+  background: var(--blue);
+  border-color: var(--blue);
 }
 
 .ms-option-label {

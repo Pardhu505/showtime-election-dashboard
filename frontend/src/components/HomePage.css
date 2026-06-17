@@ -34,7 +34,7 @@
   color: var(--text-primary);
   margin-bottom: 10px;
   padding: 0 4px;
-  border-left: 3px solid var(--teal);
+  border-left: 3px solid var(--blue);
   font-family: var(--font-display);
 }
 
@@ -153,7 +153,7 @@
 .hp-ed-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--teal);
+  color: var(--blue);
   font-family: var(--font-display);
 }
 
@@ -186,14 +186,14 @@
   text-align: right;
   font-size: 13px;
   font-weight: 500;
-  color: var(--teal);
+  color: var(--blue);
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
   padding: 6px 0;
   font-family: var(--font-body);
 }
-.hp-advanced-link:hover { color: var(--teal-dark); }
+.hp-advanced-link:hover { color: var(--blue-dark); }
 
 /* ============ Recent Assembly Elections ============ */
 .hp-recent-section { }
@@ -221,7 +221,7 @@
 .hp-recent-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-card-hover);
-  border-color: var(--teal);
+  border-color: var(--blue);
 }
 
 .hp-recent-card-banner {

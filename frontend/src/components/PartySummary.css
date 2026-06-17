@@ -202,7 +202,7 @@
 .qs-title {
   font-size: 14px;
   font-weight: 700;
-  color: var(--teal);
+  color: var(--blue);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -341,9 +341,9 @@
 
 .cc-tab-hint {
   font-size: 11px;
-  color: var(--teal);
-  background: rgba(15,138,140,0.08);
-  border: 1px solid rgba(15,138,140,0.2);
+  color: var(--blue);
+  background: rgba(0, 71, 171,0.08);
+  border: 1px solid rgba(0, 71, 171,0.2);
   padding: 6px 12px;
   border-radius: 14px;
   font-weight: 500;
@@ -374,7 +374,7 @@
 }
 .cc-stat-value.cc-flip { color: #e53935; }
 .cc-stat-value.cc-hold { color: var(--india-green); }
-.cc-stat-value.cc-turnout { color: var(--teal); }
+.cc-stat-value.cc-turnout { color: var(--blue); }
 .cc-stat-value.cc-swing { color: var(--gold); }
 
 .cc-stat-label {
