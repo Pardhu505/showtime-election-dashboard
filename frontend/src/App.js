@@ -16,6 +16,14 @@ const TYPES = ['Lok Sabha', 'Assembly'];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
   const [filters, setFilters] = useState({ year: '', type: '', state: '', pc: [], ac: [] });
   const [electionData, setElectionData] = useState(null);
@@ -146,7 +154,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Header activeTab={activeTab} setActiveTab={setActiveTab} theme={theme} toggleTheme={toggleTheme} />
 
       {/* Status badge — only shown when we have a definitive answer */}
       {useBackend !== null && (

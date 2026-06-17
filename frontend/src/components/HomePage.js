@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis
+} from 'recharts';
 import { api } from '../utils/api';
 import CasteDataPanel from './CasteDataPanel';
 import AllianceMapPanel from './AllianceMapPanel';
@@ -15,6 +18,51 @@ const ALL_STATES = [
   'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya',
   'Mizoram', 'Nagaland', 'Odisha', 'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
   'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+];
+
+const TURNOUT_TREND_DATA = [
+  { name: '2004', value: 58.1 },
+  { name: '2009', value: 58.2 },
+  { name: '2014', value: 66.4 },
+  { name: '2019', value: 67.4 },
+  { name: '2024', value: 78.4 },
+];
+
+const INSIGHTS = [
+  {
+    id: 1,
+    title: 'Youth Participation',
+    desc: '12.5M first-time voters registered for this cycle.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+    )
+  },
+  {
+    id: 2,
+    title: 'Postal Ballots',
+    desc: '4.2% increase in senior citizen postal voting.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+    )
+  },
+  {
+    id: 3,
+    title: 'Rural Women',
+    desc: 'Record 82.1% turnout among rural female voters.',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+    )
+  },
 ];
 
 export default function HomePage({ nationalSummary, recentAssembly, years, statesBy, onGo }) {
@@ -132,6 +180,66 @@ export default function HomePage({ nationalSummary, recentAssembly, years, state
 
   return (
     <div className="homepage fade-in">
+      {/* ============ HERO SECTION: Turnout & Insights ============ */}
+      <div className="hp-hero-modern">
+        <div className="hp-hero-card hp-turnout-trends">
+          <div className="hp-card-header">
+            <h3 className="hp-card-title">Turnout Trends</h3>
+            <span className="hp-card-badge">Live Updates</span>
+          </div>
+          <div className="hp-turnout-content">
+            <div className="hp-turnout-main">
+              <div className="hp-turnout-number">
+                <span className="hp-value">78.4%</span>
+                <span className="hp-label">Total Voter Turnout</span>
+              </div>
+              <div className="hp-turnout-delta positive">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+                <span>+5.2% vs 2022</span>
+              </div>
+            </div>
+            <div className="hp-turnout-chart">
+              <ResponsiveContainer width="100%" height={120}>
+                <BarChart data={TURNOUT_TREND_DATA}>
+                  <defs>
+                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--blue)" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="var(--blue-light)" stopOpacity={0.6}/>
+                    </linearGradient>
+                  </defs>
+                  <Bar dataKey="value" fill="url(#barGradient)" radius={[4, 4, 0, 0]} />
+                  <XAxis dataKey="name" hide />
+                  <Tooltip
+                    cursor={{fill: 'transparent'}}
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-dropdown)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        <div className="hp-hero-card hp-insights">
+          <div className="hp-card-header">
+            <h3 className="hp-card-title">Key Insights</h3>
+            <button className="hp-view-all">View All</button>
+          </div>
+          <div className="hp-insights-list">
+            {INSIGHTS.map(item => (
+              <div key={item.id} className="hp-insight-item">
+                <div className="hp-insight-icon">{item.icon}</div>
+                <div className="hp-insight-text">
+                  <h4>{item.title}</h4>
+                  <p>{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ============ TOP ROW: PC 2024 Summary + Election Data ============ */}
       <div className="hp-top-row">
         {/* LEFT: PC 2024 Summary (pie + alliance table) */}
