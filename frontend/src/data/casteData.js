@@ -125,7 +125,7 @@ export const CASTE_COLORS = {
   'Jatav (SC)':           '#2563eb',
   'Dusadh (SC)':          '#3b82f6',
   'Other SC':             '#60a5fa',
-  'ST':                   '#0891b2',  // blue
+  'ST':                   '#0047AB',  // blue
   'Muslim':               '#059669',  // emerald
   'Christian':            '#7c2d12',  // brown
   'Others':               '#94a3b8',  // grey
